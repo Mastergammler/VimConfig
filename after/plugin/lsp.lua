@@ -8,7 +8,7 @@ lsp.ensure_installed({
 	'sumneko_lua',
 })
 
-local cmp = reqire("cmp")
+local cmp = require("cmp")
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 local cmp_mappings = lsp.defaults.cmp_mappings({
 	['<C-h>'] = cmp.mapping.select_prev_item(cmp_select),

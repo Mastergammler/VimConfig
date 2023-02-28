@@ -1,3 +1,7 @@
 require("mg")
+require("mg.set")
+require("mg.remap")
 
-print("hello there")
+print("Loaded init 2302")
+
+
