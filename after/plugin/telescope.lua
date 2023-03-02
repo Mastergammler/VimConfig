@@ -5,4 +5,6 @@ vim.keymap.set('n','<leader>ps',function()
 	builtin.grep_string({ search = vim.fn.input("grep > ") })
 end)
 vim.keymap.set('n',"<leader>ss","<cmd>Telescope live_grep<cr>", {noremap = true, silent = true})
+-- this doesn't work
+--vim.keymap.set('n','<leader>pd',builtin.diganostics)
 
