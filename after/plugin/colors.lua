@@ -1,9 +1,9 @@
 function ColorThemeRosePine(color)
-	color = color or 'rose-pine'
-	vim.cmd.colorscheme(color)
+    color = color or 'rose-pine'
+    vim.cmd.colorscheme(color)
 
-	vim.api.nvim_set_hl(0,"Normal", { bg = "#031024" })
-	vim.api.nvim_set_hl(0,"NormalFloat", { bg = "none" })
+    vim.api.nvim_set_hl(0, "Normal", { bg = "#031024" })
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 end
 
 function ColorThemeNightfly(color)
@@ -11,10 +11,11 @@ function ColorThemeNightfly(color)
     vim.cmd.colorscheme(color)
 
     -- vim.api.nvim_set_hl(0,"Normal", { bg = "none" })
-    vim.api.nvim_set_hl(0,"NormalFloat",{ bg = "none" })
-    
+    vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 end
 
 ColorThemeNightfly()
 
-vim.api.nvim_set_hl(0,"Boolean", { fg = "#f79d28"})
+vim.api.nvim_set_hl(0, "Boolean", { fg = "#f79d28" })
+vim.api.nvim_set_hl(0, "@public.cs", { fg = "#f79d28" })
+print("Colors are applied")

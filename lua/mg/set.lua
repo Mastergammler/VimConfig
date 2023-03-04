@@ -17,6 +17,7 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
 vim.opt.termguicolors = true
+vim.opt.splitbelow = true
 
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes"
@@ -30,4 +31,3 @@ vim.g.mapleader = " "
 
 -- setting the default register to use the clipborad as well
 vim.opt.clipboard:append('unnamed,unnamedplus')
-
