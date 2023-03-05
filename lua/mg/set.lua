@@ -1,3 +1,5 @@
+vim.g.mapleader = " "
+
 vim.opt.nu = true
 vim.opt.relativenumber = true
 
@@ -25,9 +27,8 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "120"
+    vim.opt.colorcolumn = "120"
 
-vim.g.mapleader = " "
 
 -- setting the default register to use the clipborad as well
 vim.opt.clipboard:append('unnamed,unnamedplus')
