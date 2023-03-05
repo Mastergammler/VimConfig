@@ -7,20 +7,8 @@ return require('packer').startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 
-    use {
-        'nvim-telescope/telescope.nvim', tag = '0.1.1',
-        -- or                            , branch = '0.1.x',
-        requires = { { 'nvim-lua/plenary.nvim' } }
-    }
 
-    use({
-        'bluz71/vim-nightfly-colors',
-        as = 'nightfly',
-        config = function()
-            vim.cmd('colorscheme nightfly')
-        end
-    })
-
+    -- visual stuff
     use {
         "folke/todo-comments.nvim",
         requires = "nvim-lua/plenary.nvim",
@@ -29,6 +17,26 @@ return require('packer').startup(function(use)
 
             }
         end
+    }
+
+    use {
+        'bluz71/vim-nightfly-colors',
+        as = 'nightfly',
+        config = function()
+            vim.cmd('colorscheme nightfly')
+        end
+    }
+
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+    }
+
+    -- navigation stuff etc
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        -- or                            , branch = '0.1.x',
+        requires = { { 'nvim-lua/plenary.nvim' } }
     }
 
     use({ 'nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' } })
