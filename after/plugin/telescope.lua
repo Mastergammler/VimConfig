@@ -48,3 +48,7 @@ vim.keymap.set('n', '<leader>sb', builtin.buffers,
 vim.keymap.set('n', '<leader>?', builtin.keymaps, { desc = "searches all defined keymaps" })
 vim.keymap.set('n', '<leader>hh', builtin.help_tags, { desc = '[H]elp documents' })
 vim.keymap.set('n', '<leader>pd', builtin.diagnostics, { desc = '[P]roject [D]iagnostics' })
+vim.keymap.set('n','<leader>rr', builtin.lsp_references, {desc = '[R]efe[r]ences display' })
+
+
+
