@@ -15,6 +15,8 @@ vim.opt.wrap = false
 --vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
+vim.o.ignorecase = true
+vim.o.smartcase = true
 vim.opt.hlsearch = true
 vim.opt.incsearch = true
 
