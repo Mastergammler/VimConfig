@@ -24,6 +24,8 @@ return require('packer').startup(function(use)
         requires = "nvim-tree/nvim-web-devicons",
     }
 
+    use('WhoIsSethDaniel/toggle-lsp-diagnostics.nvim')
+
     use {
         'bluz71/vim-nightfly-colors',
         as = 'nightfly',
@@ -36,6 +38,8 @@ return require('packer').startup(function(use)
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
+
+
 
     -- navigation stuff etc
     use {

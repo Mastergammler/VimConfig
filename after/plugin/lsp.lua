@@ -10,10 +10,10 @@ lsp.ensure_installed({
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-h>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-l>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-h>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<C-l>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-Space>'] = cmp.mapping.complete(),
 })
 
 lsp.setup_nvim_cmp({
@@ -21,17 +21,17 @@ lsp.setup_nvim_cmp({
 })
 
 lsp.set_preferences({
-    sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
-    }
+    --sign_icons = {
+     --   error = 'E',
+      --  warn = 'W',
+       -- hint = 'H',
+       -- info = 'I'
+    --}
 })
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
-    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
-        { underline = true })
+--vim.lsp.handlers["textDocument/publishDiagnostics"] =
+--   vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
+--      { underline = true })
 
 
 lsp.on_attach(function(client, bufnr)
