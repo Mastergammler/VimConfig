@@ -4,7 +4,16 @@ vim.keymap.set("n", "<leader>fs", function()
     vim.lsp.buf.format()
 end, { silent = true, desc = '[F]ile [s]ave (saves and runs lsp format)' })
 
--- window jumping remap
+-- NAV
+-- NOT SURE IF I LIKE THOSE, this makes me a bit dizzy i think
+--vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = 'Half window [d]own with staying in the middle' })
+--vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = 'Half window [u]p with staying in the middle' })
+--vim.keymap.set("n", "n", "nzzzv", { desc = 'Stay in middle during [n]ext text search result' })
+--vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
+vim.keymap.set("n","<C-h>", vim.cmd.bprevious, {desc = 'Open previous buffer'})
+vim.keymap.set("n","<C-l>", vim.cmd.bnext, {desc = 'Open next buffer'})
+vim.keymap.set("n","<leader>l",vim.cmd.nohlsearch, {desc = 'Deselects highlights after searching'})
+
 vim.keymap.set("n", "<leader>wd", vim.cmd.close, { noremap = true, desc = '[W]indow [d]elete - closes the window' })
 vim.keymap.set("n", "<leader>ww", "<C-w>w", { noremap = true, desc = 'Jumps from one [w]indow to the next [w]indow' })
 vim.keymap.set("n", "<leader>wj", "<C-w>j", { noremap = true, desc = "Jump [W]indow below" })
@@ -26,13 +35,6 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = 'Moves the current selecti
 vim.keymap.set("n", "J", "mzJ`z", { desc = 'Moves lower line to this one with cursor in place' })
 vim.keymap.set("n", "<leader>r", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>",
     { desc = 'Search [r]eplace all instance of word under cursor' })
-
--- navigation / NOT SURE IF I LIKE THOSE, this makes me a bit dizzy i think
---vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = 'Half window [d]own with staying in the middle' })
---vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = 'Half window [u]p with staying in the middle' })
---vim.keymap.set("n", "n", "nzzzv", { desc = 'Stay in middle during [n]ext text search result' })
---vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
---
 
 -- yanking to clipboard
 -- TODO: reset the clipboard usage for pasting
