@@ -30,5 +30,6 @@ ColorThemeNightfly()
 
 vim.api.nvim_set_hl(0, "Boolean", { fg = "#f79d28" })
 vim.api.nvim_set_hl(0, "@public.cs", { fg = "#f79d28" })
+vim.api.nvim_set_hl(0, "@function_call.lua", { fg = "#f79d28" })
 
 print("Colors are applied")
