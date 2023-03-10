@@ -4,6 +4,10 @@
 vim.cmd [[packadd packer.nvim]]
 
 return require('packer').startup(function(use)
+    -- Own dev plugins
+
+    use 'I:/02 Areas/Dev/Lua/stackmap-example-plugin'
+
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 

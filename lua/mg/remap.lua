@@ -37,6 +37,21 @@ vim.keymap.set("n", "J", "mzJ`z", { desc = 'Moves lower line to this one with cu
 vim.keymap.set("n", "<leader>r", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>",
     { desc = 'Search [r]eplace all instance of word under cursor' })
 
+-- navigation / NOT SURE IF I LIKE THOSE, this makes me a bit dizzy i think
+--vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = 'Half window [d]own with staying in the middle' })
+--vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = 'Half window [u]p with staying in the middle' })
+--vim.keymap.set("n", "n", "nzzzv", { desc = 'Stay in middle during [n]ext text search result' })
+--vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
+
+
+-- dev etc
+vim.keymap.set("n", "<leader>xx", function()
+    vim.cmd("w")
+    vim.cmd("source %")
+end,
+    { desc = "Runs the current file (similar to SO)" })
+
+
 -- yanking to clipboard
 -- TODO: reset the clipboard usage for pasting
 vim.keymap.set("n", "<leader>y", "\"+y", { desc = "Yank to clipboard" })
