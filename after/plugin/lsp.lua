@@ -10,10 +10,11 @@ lsp.ensure_installed({
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-        ['<C-h>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-l>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
+    -- TODO: what is this for????
+        ['<M-Space>'] = cmp.mapping.complete(),
 })
 
 lsp.setup_nvim_cmp({
@@ -22,10 +23,10 @@ lsp.setup_nvim_cmp({
 
 lsp.set_preferences({
     --sign_icons = {
-     --   error = 'E',
-      --  warn = 'W',
-       -- hint = 'H',
-       -- info = 'I'
+    --   error = 'E',
+    --  warn = 'W',
+    -- hint = 'H',
+    -- info = 'I'
     --}
 })
 
@@ -48,7 +49,7 @@ lsp.on_attach(function(client, bufnr)
     -- Defined by telescope becauese better overview + coloring
     -- vim.keymap.set("n","<leader>rr",function() vim.lsp.buf.references() end, opts)
     vim.keymap.set("n", "<leader>R", function() vim.lsp.buf.rename() end, options)
-    vim.keymap.set("i", "<C-?>", function() vim.lsp.buf.signature_help() end, options)
+    vim.keymap.set("i", "<C-a>", function() vim.lsp.buf.signature_help() end, options)
 end)
 
 lsp.setup()

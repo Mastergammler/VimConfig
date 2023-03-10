@@ -24,6 +24,8 @@ function ColorThemeNightfly(color)
     vim.g.nightflyUndercurls = true;
 end
 
+-- TODO: something
+
 ColorThemeNightfly()
 
 vim.api.nvim_set_hl(0, "Boolean", { fg = "#f79d28" })
