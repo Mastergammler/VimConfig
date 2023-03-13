@@ -5,9 +5,9 @@ tele.setup {
     defaults = {
         mappings = {
             i = {
-                ["<C-j>"] = require('telescope.actions').move_selection_next,
-                ["<C-k>"] = require('telescope.actions').move_selection_previous,
-                ["<C-x>"] = require('telescope.actions').select_default
+                    ["<C-j>"] = require('telescope.actions').move_selection_next,
+                    ["<C-k>"] = require('telescope.actions').move_selection_previous,
+                    ["<C-x>"] = require('telescope.actions').select_default
             },
         },
     },
@@ -29,7 +29,7 @@ vim.keymap.set('n', '<leader>ps',
         builtin.grep_string({ search = vim.fn.input("grep > ") })
     end,
     { desc = '[P]roject [s]earch - symbols in current dir. (Requires ripgrep)' })
-vim.keymap.set('n', '<leader>ds', builtin.lsp_document_symbols, { desc = '[D]ocument [s]ymbols' })
+vim.keymap.set('n', '<leader>ls', builtin.lsp_document_symbols, { desc = '[L]ist document [s]ymbols' })
 -- whats the difference to life grep?
 vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord (in file?)' })
 vim.keymap.set('n', '<leader>/',
@@ -43,12 +43,9 @@ vim.keymap.set('n', '<leader>/',
     { desc = '[/] Fuzzily search in current buffer' })
 
 -- util searching
-vim.keymap.set('n', '<leader>sb', builtin.buffers,
-    { desc = '[S]earch existing [b]uffers' })
+vim.keymap.set('n', '<leader>lb', builtin.buffers,
+    { desc = '[L]ist existing [b]uffers' })
 vim.keymap.set('n', '<leader>?', builtin.keymaps, { desc = "searches all defined keymaps" })
 vim.keymap.set('n', '<leader>hh', builtin.help_tags, { desc = '[H]elp documents' })
-vim.keymap.set('n', '<leader>pd', builtin.diagnostics, { desc = '[P]roject [D]iagnostics' })
-vim.keymap.set('n','<leader>rr', builtin.lsp_references, {desc = '[R]efe[r]ences display' })
-
-
-
+vim.keymap.set('n', '<leader>ld', builtin.diagnostics, { desc = '[L]ist [Diagnostics] (for the project)' })
+vim.keymap.set('n', '<leader>rr', builtin.lsp_references, { desc = '[R]efe[r]ences display' })

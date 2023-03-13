@@ -13,7 +13,7 @@ function ColorThemeNightfly(color)
     --vim.api.nvim_set_hl(0,"Normal", { bg = "none" })
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
     vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#807b69" })
-    --vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { link = "NightflyRed" })
+    vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { link = "NightflyRed" })
     --vim.api.nvim_set_hl(0, "DiganosticVirtualTextInfo", { link = "NightflyBlue" })
     --vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { link = "NightflyWhite" })
 
@@ -25,10 +25,18 @@ function ColorThemeNightfly(color)
 end
 
 -- TODO: something
+--
+--
 
 ColorThemeNightfly()
 
-vim.api.nvim_set_hl(0, "Boolean", { fg = "#f79d28" })
+vim.api.nvim_set_hl(0, "Bool", { fg = "#f79d28" })
 vim.api.nvim_set_hl(0, "@public.cs", { fg = "#f79d28" })
+
+
+-- diff colors etc
+vim.api.nvim_set_hl(0, 'DiffAdd', { bg = "#0c2a59" })
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = "#4a4502" })
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = "none", fg = "#d95a4e" })
 
 print("Colors are applied")

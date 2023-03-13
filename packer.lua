@@ -14,7 +14,7 @@ return require('packer').startup(function(use)
         requires = "nvim-lua/plenary.nvim",
         config = function()
             require("todo-comments").setup {
-                signs = true
+                signs = false
             }
         end
     }
@@ -25,6 +25,8 @@ return require('packer').startup(function(use)
     }
 
     use('WhoIsSethDaniel/toggle-lsp-diagnostics.nvim')
+    use { 'sindrets/diffview.nvim', 
+    requires = 'nvim-lua/plenary.nvim' }
 
     use {
         'bluz71/vim-nightfly-colors',

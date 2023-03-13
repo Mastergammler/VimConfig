@@ -12,6 +12,7 @@ end, { silent = true, desc = '[F]ile [s]ave (saves and runs lsp format)' })
 --vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
 vim.keymap.set("n", "<C-h>", vim.cmd.bprevious, { desc = 'Open previous buffer' })
 vim.keymap.set("n", "<C-l>", vim.cmd.bnext, { desc = 'Open next buffer' })
+-- TODO: maybe change this now becaues L is now list
 vim.keymap.set("n", "<leader>l", vim.cmd.nohlsearch, { desc = 'Deselects highlights after searching' })
 
 vim.keymap.set("n", "<leader>wd", vim.cmd.close, { noremap = true, desc = '[W]indow [d]elete - closes the window' })
@@ -45,13 +46,14 @@ vim.keymap.set("n", "<leader>d", "\"_d", { desc = "Delete to void" })
 vim.keymap.set("v", "<leader>d", "\"_d", { desc = "Delete to void" })
 
 vim.keymap.set("n", "Q", "<nop>")
+vim.keymap.set("n", "<leader>", "<nop>", { desc = "Single leader press does nothing" })
 
 --quickfix
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>", { desc = "Quickfix next" })
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>", { desc = "Quickfix previous" })
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>", { desc = "Quickfix next within project?" })
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>", { desc = "Quickfix previous within project?" })
-vim.keymap.set("n", "<leader>tl", vim.cmd.TodoQuickFix, { desc = "[T]odo quickfix [l]ist " })
+vim.keymap.set("n", "<leader>lt", vim.cmd.TodoQuickFix, { desc = "[L]ist [T]odos (quickfix)" })
 
 -- prep for future use
 --vim.keymap.set("n","<leader>ns","<cmd>silent !tmix neww tmux-sessionizer<CR>", { desc = "New tmux session" })
