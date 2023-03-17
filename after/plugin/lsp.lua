@@ -21,6 +21,16 @@ lsp.setup_nvim_cmp({
     mapping = cmp_mappings
 })
 
+lsp.configure('lemminx', {
+    single_file_support = true,
+    on_attach = function(client, bufnr)
+        print('hello from lemminx')
+    end,
+    -- FIXME: has no impact on the types
+    filetypes = { "xml", "svg", "cshtml", "xaml" },
+})
+
+
 lsp.set_preferences({
     sign_icons = {
         error = '',
@@ -33,9 +43,11 @@ lsp.set_preferences({
 --vim.lsp.handlers["textDocument/publishDiagnostics"] =
 --   vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
 --      { underline = true })
+--
 
 
 lsp.on_attach(function(client, bufnr)
+    print("lsp active")
     local options = { buffer = bufnr, remap = false }
 
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, options)
