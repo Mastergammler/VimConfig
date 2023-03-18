@@ -50,7 +50,7 @@ vim.keymap.set("n", "<leader>xx", function()
     vim.cmd("source %")
 end,
     { desc = "Runs the current file (similar to SO)" })
-
+vim.keymap.set("n", "<leader>rt", "<Plug>PlenaryTestFile", { desc = "[r]un [t]ests for the current file" })
 
 -- yanking to clipboard
 -- TODO: reset the clipboard usage for pasting

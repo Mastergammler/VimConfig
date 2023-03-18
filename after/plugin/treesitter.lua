@@ -16,6 +16,29 @@ require 'nvim-treesitter.configs'.setup {
         additional_vim_regex_highlighting = false,
     },
 
+    rainbow = {
+        enable = true,
+        extended_mode = false,
+        termcolors = {
+            "#ffff66",
+            "#66ff66",
+            "#33ccff",
+            "#ff66ff",
+            "#ff9966",
+            "#00ffcc",
+            "#cc00ff"
+        },
+        colors = {
+            "#ffff66",
+            "#66ff66",
+            "#33ccff",
+            "#ff66ff",
+            "#ff9966",
+            "#00ffcc",
+            "#cc00ff"
+        }
+    },
+
     indent = { enable = true },
     incremental_selection = {
         enabled = true,
