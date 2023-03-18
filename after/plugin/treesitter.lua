@@ -1,3 +1,5 @@
+local rainbow = require 'ts-rainbow'
+
 require 'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all" (the four listed parsers should always be installed)
     ensure_installed = { "c", "lua", "vim", "help", "cpp", "javascript", "typescript", "json", "java", "haskell", "html", "c_sharp" },
@@ -16,27 +18,28 @@ require 'nvim-treesitter.configs'.setup {
         additional_vim_regex_highlighting = false,
     },
 
+    query_linter = {
+        enable = true,
+        use_virtual_text = true,
+        lint_events = { "BufWrite", "CursorHold" }
+
+    },
+
     rainbow = {
         enable = true,
-        extended_mode = false,
-        termcolors = {
-            "#ffff66",
-            "#66ff66",
-            "#33ccff",
-            "#ff66ff",
-            "#ff9966",
-            "#00ffcc",
-            "#cc00ff"
+        query = {
+            'rainbow-parens'
         },
-        colors = {
-            "#ffff66",
-            "#66ff66",
-            "#33ccff",
-            "#ff66ff",
-            "#ff9966",
-            "#00ffcc",
-            "#cc00ff"
-        }
+        strategy = rainbow.strategy.global,
+        hlgroups = {
+            'TSRainbowYellow',
+            'TSRainbowViolet',
+            'TSRainbowGreen',
+            'TSRainbowBlue',
+            'TSRainbowCyan',
+            'TSRainbowRed',
+            'TSRainbowOrange',
+        },
     },
 
     indent = { enable = true },

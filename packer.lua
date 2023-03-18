@@ -29,8 +29,8 @@ return require('packer').startup(function(use)
     }
 
     use('WhoIsSethDaniel/toggle-lsp-diagnostics.nvim')
-    use { 'sindrets/diffview.nvim', 
-    requires = 'nvim-lua/plenary.nvim' }
+    use { 'sindrets/diffview.nvim',
+        requires = 'nvim-lua/plenary.nvim' }
 
     use {
         'bluz71/vim-nightfly-colors',
@@ -49,7 +49,7 @@ return require('packer').startup(function(use)
     -- FIXME: color overrides not working
     -- dunno if it is really better without that ...
     -- TODO: look how the styling is in VSC because that looks good
-    use 'p00f/nvim-ts-rainbow'
+    use 'HiPhish/nvim-ts-rainbow2'
 
 
     -- navigation stuff etc

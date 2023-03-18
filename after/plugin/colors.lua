@@ -28,13 +28,30 @@ end
 
 ColorThemeNightfly()
 
-vim.api.nvim_set_hl(0, "Bool", { fg = "#f79d28" })
-vim.api.nvim_set_hl(0, "@public.cs", { fg = "#f79d28" })
-vim.api.nvim_set_hl(0, "@function_call.lua", { fg = "#f79d28" })
+-- treesitter colors
+vim.api.nvim_set_hl(0, "@variable", { fg = "#cccccc" })
+vim.api.nvim_set_hl(0, "@string", { fg = "#afd676" })
+vim.api.nvim_set_hl(0, "@storageclass", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@constant.builtin", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@variable.builtin", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@type.builtin", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@constructor", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@include", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "@type", { fg = "#d9c578" })
+--vim.api.nvim_set_hl(0, "@type", { fg = "#cbbb7d" })
+vim.api.nvim_set_hl(0, "@boolean", { link = "@number" })
+vim.api.nvim_set_hl(0, "@conditional", { fg = "#67f6f9" })
+
+-- brakets
+vim.api.nvim_set_hl(0, "TSRainbowRed", { fg = "#ff0000" })
+vim.api.nvim_set_hl(0, "TSRainbowYellow", { fg = "#ffff00" })
+vim.api.nvim_set_hl(0, "TSRainbowCyan", { link = "@conditional" })
+vim.api.nvim_set_hl(0, "TSRainbowViolet", { link = "@type.qualifier" })
+vim.api.nvim_set_hl(0, "TSRainbowBlue", { link = "@function.call" })
+vim.api.nvim_set_hl(0, "TSRainbowGreen", { fg = "#86ff1c" })
+
 
 -- diff colors etc
 vim.api.nvim_set_hl(0, 'DiffAdd', { bg = "#0c2a59" })
 vim.api.nvim_set_hl(0, 'DiffChange', { bg = "#4a4502" })
 vim.api.nvim_set_hl(0, 'DiffDelete', { bg = "none", fg = "#d95a4e" })
-
-print("Colors are applied")

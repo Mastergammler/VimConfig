@@ -1,7 +1,7 @@
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = '[P]roject [v]iew (show current folder files)' })
 vim.keymap.set("n", "<leader>fs", function()
-    vim.cmd('update')
     vim.lsp.buf.format()
+    vim.cmd.update()
 end, { silent = true, desc = '[F]ile [s]ave (saves and runs lsp format)' })
 
 -- NAV
@@ -51,7 +51,29 @@ vim.keymap.set("n", "<leader>r", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left>
 --vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = 'Half window [u]p with staying in the middle' })
 --vim.keymap.set("n", "n", "nzzzv", { desc = 'Stay in middle during [n]ext text search result' })
 --vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
+--
 
+vim.keymap.set("n", "<C-t>g", vim.cmd.TSCaptureUnderCursor)
+
+local someQuery = [[
+        SELECT id, twitch_id, github_id
+        FROM users where id = ?1
+]]
+
+local otherQuery = [[
+    INSERT INTO users (id, twitch_id, github_id)
+    VALUES(?1,?2,?3) ON CONFLICT (id) DO
+    UPDATE
+    SET twitch_id=?2, github_id=?3
+]]
+
+
+
+local justAString = [[
+ Just writing some things here
+ Just looking whot it will do etc
+ Very interesting
+]]
 
 -- dev etc
 vim.keymap.set("n", "<leader>xx", function()
