@@ -10,11 +10,11 @@ lsp.ensure_installed({
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-        ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
     -- TODO: what is this for????
-        ['<M-Space>'] = cmp.mapping.complete(),
+    ['<M-Space>'] = cmp.mapping.complete(),
 })
 
 lsp.setup_nvim_cmp({
@@ -24,7 +24,7 @@ lsp.setup_nvim_cmp({
 lsp.configure('lemminx', {
     single_file_support = true,
     on_attach = function(client, bufnr)
-        print('hello from lemminx')
+        print('lemminx init')
     end,
     -- FIXME: has no impact on the types
     filetypes = { "xml", "svg", "cshtml", "xaml" },
@@ -47,7 +47,7 @@ lsp.set_preferences({
 
 
 lsp.on_attach(function(client, bufnr)
-    print("lsp active")
+    print("履 READY TO ROCK 履")
     local options = { buffer = bufnr, remap = false }
 
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, options)

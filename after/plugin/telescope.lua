@@ -5,11 +5,18 @@ tele.setup {
     defaults = {
         mappings = {
             i = {
-                    ["<C-j>"] = require('telescope.actions').move_selection_next,
-                    ["<C-k>"] = require('telescope.actions').move_selection_previous,
-                    ["<C-x>"] = require('telescope.actions').select_default
+                ["<C-j>"] = require('telescope.actions').move_selection_next,
+                ["<C-k>"] = require('telescope.actions').move_selection_previous,
+                ["<C-x>"] = require('telescope.actions').select_default
             },
         },
+        layout_config = {
+            height = 0.95,
+            width = 0.9,
+            preview_width = 0.65
+        },
+        -- TODO: LSP display value stuff
+        path_display = { truncate = 3 }
     },
 }
 
@@ -47,5 +54,17 @@ vim.keymap.set('n', '<leader>lb', builtin.buffers,
     { desc = '[L]ist existing [b]uffers' })
 vim.keymap.set('n', '<leader>?', builtin.keymaps, { desc = "searches all defined keymaps" })
 vim.keymap.set('n', '<leader>hh', builtin.help_tags, { desc = '[H]elp documents' })
-vim.keymap.set('n', '<leader>ld', builtin.diagnostics, { desc = '[L]ist [Diagnostics] (for the project)' })
-vim.keymap.set('n', '<leader>rr', builtin.lsp_references, { desc = '[R]efe[r]ences display' })
+vim.keymap.set('n', '<leader>ld', function()
+    builtin.diagnostics({ line_width = 18 })
+end
+    , { desc = '[L]ist [D]iagnostics (for the project)' })
+
+vim.keymap.set('n', '<leader>le', function()
+    builtin.diagnostics({ line_width = 18, severity_limit = 1 })
+end
+    , { desc = '[L]ist [e]rrors (for the project | diagnostics)' })
+
+vim.keymap.set('n', '<leader>rr', function()
+    builtin.lsp_references({ show_line = false, trim_text = true })
+end,
+    { desc = '[R]efe[r]ences display' })

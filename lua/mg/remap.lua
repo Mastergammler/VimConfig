@@ -23,6 +23,15 @@ vim.keymap.set("n", "<leader>wl", "<C-w>l", { noremap = true, desc = "Jump [W]in
 vim.keymap.set("n", "<leader>wh", "<C-w>h", { noremap = true, desc = "Jump [W]indow left" })
 vim.keymap.set("n", "<leader>w/", vim.cmd.vs, { noremap = true, desc = "Split window to the right" })
 
+-- tree stuff
+vim.keymap.set("n", "<leader>lf", vim.cmd.NvimTreeToggle, { desc = "[L]ist [F]iles (NvimTree)" })
+vim.keymap.set("n", "<leader>cf", function()
+    vim.cmd.NvimTreeFindFile()
+    vim.cmd.NvimTreeFocus()
+end, { desc = "[C]urrent [F]ile (NvimTree)" })
+vim.keymap.set("n", "<leader>tc", vim.cmd.NvimTreeCollapse, { desc = "[T]ree [c]ollapse (NvimTree)" })
+
+
 -- terminal
 vim.keymap.set("n", "<leader>tt", function()
     -- this doesn't open the same buffer, i have to do this via session management
@@ -69,6 +78,7 @@ vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>", { desc = "Quickfix previous" })
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>", { desc = "Quickfix next within project?" })
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>", { desc = "Quickfix previous within project?" })
 vim.keymap.set("n", "<leader>lt", vim.cmd.TodoQuickFix, { desc = "[L]ist [T]odos (quickfix)" })
+
 
 -- prep for future use
 --vim.keymap.set("n","<leader>ns","<cmd>silent !tmix neww tmux-sessionizer<CR>", { desc = "New tmux session" })
