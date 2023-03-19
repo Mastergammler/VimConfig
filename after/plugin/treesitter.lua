@@ -1,4 +1,5 @@
 local rainbow = require 'ts-rainbow'
+local query = require 'vim.treesitter.query'
 
 require 'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all" (the four listed parsers should always be installed)
@@ -22,7 +23,6 @@ require 'nvim-treesitter.configs'.setup {
         enable = true,
         use_virtual_text = true,
         lint_events = { "BufWrite", "CursorHold" }
-
     },
 
     rainbow = {
@@ -32,13 +32,13 @@ require 'nvim-treesitter.configs'.setup {
         },
         strategy = rainbow.strategy.global,
         hlgroups = {
-            'TSRainbowYellow',
             'TSRainbowViolet',
-            'TSRainbowGreen',
+            'TSRainbowYellow',
             'TSRainbowBlue',
+            --'TSRainbowGreen',
             'TSRainbowCyan',
-            'TSRainbowRed',
-            'TSRainbowOrange',
+            --'TSRainbowRed',
+            --'TSRainbowOrange',
         },
     },
 
@@ -53,3 +53,5 @@ require 'nvim-treesitter.configs'.setup {
         }
     }
 }
+
+query.set_query('lua', "injections", "(comment) @field")

@@ -46,8 +46,6 @@ return require('packer').startup(function(use)
     }
 
     -- rainbow brackets for treesitter
-    -- FIXME: color overrides not working
-    -- dunno if it is really better without that ...
     -- TODO: look how the styling is in VSC because that looks good
     use 'HiPhish/nvim-ts-rainbow2'
 
