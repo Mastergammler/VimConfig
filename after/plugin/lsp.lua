@@ -10,11 +10,11 @@ lsp.ensure_installed({
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
     -- TODO: what is this for????
-    ['<M-Space>'] = cmp.mapping.complete(),
+        ['<M-Space>'] = cmp.mapping.complete(),
 })
 
 lsp.setup_nvim_cmp({
@@ -60,8 +60,14 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "<leader>.", function() vim.lsp.buf.code_action() end, options)
     -- Defined by telescope becauese better overview + coloring
     -- vim.keymap.set("n","<leader>rr",function() vim.lsp.buf.references() end, opts)
-    vim.keymap.set("n", "<leader>R", function() vim.lsp.buf.rename() end, options)
+
+    -- Rename and save everything, that i don't have to manually go through it again
+    vim.keymap.set("n", "<leader>R", function()
+        vim.lsp.buf.rename()
+        vim.cmd("wall")
+    end, options)
     vim.keymap.set("i", "<C-a>", function() vim.lsp.buf.signature_help() end, options)
+    vim.keymap.set("n", "<C-a>", function() vim.lsp.buf.signature_help() end, options)
 end)
 
 lsp.setup()

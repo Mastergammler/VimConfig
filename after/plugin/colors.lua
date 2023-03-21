@@ -55,6 +55,8 @@ vim.api.nvim_set_hl(0, "TSRainbowGreen", { fg = "#86ff1c" })
 
 -- diff colors etc
 vim.api.nvim_set_hl(0, 'DiffAdd', { bg = "#0c2a59" })
-vim.api.nvim_set_hl(0, 'DiffChange', { bg = "#4a4502" })
+--vim.api.nvim_set_hl(0, 'DiffChange', { bg = "#4a4502" })
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = "#3b3819" })
 vim.api.nvim_set_hl(0, 'DiffText', { bg = "#022799" })
-vim.api.nvim_set_hl(0, 'DiffDelete', { bg = "none", fg = "#d95a4e" })
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = "#40130a", fg = "#40130a" })
+--vim.api.nvim_set_hl(0, 'DiffDelete', { bg = "#40130a", fg = "#d95a4e" })

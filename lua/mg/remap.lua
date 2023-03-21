@@ -37,7 +37,7 @@ vim.keymap.set("n", "<leader>tt", function()
     -- this doesn't open the same buffer, i have to do this via session management
     vim.cmd("sp term://sh")
 end, { desc = 'Opens a new terminal horizontally' })
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, desc = 'Exits terminal insert mode' })
+vim.keymap.set("t", "``", "<C-\\><C-n>", { noremap = true, desc = 'Exits terminal insert mode' })
 
 -- editing
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Moves the current selection one line up' })
@@ -77,9 +77,9 @@ local justAString = [[
 
 -- dev etc
 vim.keymap.set("n", "<leader>xx", function()
-    vim.cmd("w")
-    vim.cmd("source %")
-end,
+        vim.cmd("w")
+        vim.cmd("source %")
+    end,
     { desc = "Runs the current file (similar to SO)" })
 vim.keymap.set("n", "<leader>rt", "<Plug>PlenaryTestFile", { desc = "[r]un [t]ests for the current file" })
 

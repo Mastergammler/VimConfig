@@ -5,9 +5,9 @@ tele.setup {
     defaults = {
         mappings = {
             i = {
-                ["<C-j>"] = require('telescope.actions').move_selection_next,
-                ["<C-k>"] = require('telescope.actions').move_selection_previous,
-                ["<C-x>"] = require('telescope.actions').select_default
+                    ["<C-j>"] = require('telescope.actions').move_selection_next,
+                    ["<C-k>"] = require('telescope.actions').move_selection_previous,
+                    ["<C-x>"] = require('telescope.actions').select_default
             },
         },
         layout_config = {
@@ -21,7 +21,10 @@ tele.setup {
 }
 
 -- file searching
-vim.keymap.set('n', '<leader>ff', builtin.find_files,
+vim.keymap.set('n', '<leader>ff',
+    function()
+        builtin.find_files({ no_ignore = true })
+    end,
     { desc = '[F]ind [f]iles (opend dir)' })
 vim.keymap.set('n', '<leader><leader>', builtin.git_files,
     { desc = 'Find git files (untracked are ignored!)' })
@@ -57,14 +60,15 @@ vim.keymap.set('n', '<leader>hh', builtin.help_tags, { desc = '[H]elp documents'
 vim.keymap.set('n', '<leader>ld', function()
     builtin.diagnostics({ line_width = 18 })
 end
-    , { desc = '[L]ist [D]iagnostics (for the project)' })
+, { desc = '[L]ist [D]iagnostics (for the project)' })
 
 vim.keymap.set('n', '<leader>le', function()
+    -- doesn't work somehow vim.lsp.diagnostic.reset()
     builtin.diagnostics({ line_width = 18, severity_limit = 1 })
 end
-    , { desc = '[L]ist [e]rrors (for the project | diagnostics)' })
+, { desc = '[L]ist [e]rrors (for the project | diagnostics)' })
 
 vim.keymap.set('n', '<leader>rr', function()
-    builtin.lsp_references({ show_line = false, trim_text = true })
-end,
+        builtin.lsp_references({ show_line = false, trim_text = true })
+    end,
     { desc = '[R]efe[r]ences display' })
