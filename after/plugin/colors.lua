@@ -30,7 +30,7 @@ ColorThemeNightfly()
 
 -- treesitter colors
 vim.api.nvim_set_hl(0, "@variable", { fg = "#cccccc" })
-vim.api.nvim_set_hl(0, "@string", { fg = "#afd676", italic = true })
+vim.api.nvim_set_hl(0, "@string", { fg = "#afd676", italic = false })
 vim.api.nvim_set_hl(0, "@storageclass", { link = "@type.qualifier" })
 vim.api.nvim_set_hl(0, "@constant.builtin", { link = "@type.qualifier" })
 vim.api.nvim_set_hl(0, "@variable.builtin", { link = "@type.qualifier", bold = true })

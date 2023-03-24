@@ -1,5 +1,25 @@
 local lsp = require("lsp-zero")
 
+
+--lsp.configure('clangd',{
+--    cmd = {"clangd","--background-index"},
+--    on_attach = function(client,bufnr)
+--        print("clangd says hello")
+--    end,
+--    flags = {
+--        debounce_text_changes = 150
+--    },
+--    init_options = {
+--        clangdFileStates = true,
+--        usePlaceholders = true,
+--        completeUnimported = true,
+--        semanticHighlighting =true
+--    },
+--    capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+--})
+
+
+
 lsp.preset("recommended")
 
 lsp.ensure_installed({
@@ -29,6 +49,8 @@ lsp.configure('lemminx', {
     -- FIXME: has no impact on the types
     filetypes = { "xml", "svg", "cshtml", "xaml" },
 })
+
+
 
 
 lsp.set_preferences({
