@@ -57,6 +57,13 @@ return require('packer').startup(function(use)
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
 
+    -- debugging
+    use 'mfussenegger/nvim-dap'
+    use 'leoluz/nvim-dap-go'
+    use 'rcarriga/nvim-dap-ui'
+    use 'theHamsta/nvim-dap-virtual-text'
+    use 'nvim-telescope/telescope-dap.nvim'
+
     use('m4xshen/autoclose.nvim')
 
     use({ 'nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' } })
