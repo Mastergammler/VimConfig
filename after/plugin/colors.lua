@@ -14,7 +14,7 @@ function ColorThemeNightfly(color)
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
     vim.api.nvim_set_hl(0, "DiagnosticVirtualTextWarn", { fg = "#807b69" })
     vim.api.nvim_set_hl(0, "DiagnosticVirtualTextError", { link = "NightflyRed" })
-    --vim.api.nvim_set_hl(0, "DiganosticVirtualTextInfo", { link = "NightflyBlue" })
+    vim.api.nvim_set_hl(0, "DiganosticVirtualTextInfo", { link = "NightflyBlue" })
     --vim.api.nvim_set_hl(0, "DiagnosticVirtualTextHint", { link = "NightflyWhite" })
 
     vim.g.nightflyCursorColor = true;

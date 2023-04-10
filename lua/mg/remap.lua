@@ -78,7 +78,9 @@ local justAString = [[
 -- dev etc
 vim.keymap.set("n", "<leader>xx", function()
         vim.cmd("w")
-        vim.cmd("source %")
+        -- NOTE: source % didn't seem to give me all the output '
+        --  neither does it this way, something in this function messes it up
+        vim.cmd("so")
     end,
     { desc = "Runs the current file (similar to SO)" })
 vim.keymap.set("n", "<leader>rt", "<Plug>PlenaryTestFile", { desc = "[r]un [t]ests for the current file" })
