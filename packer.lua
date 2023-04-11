@@ -8,6 +8,9 @@ return require('packer').startup(function(use)
     -- Own dev plugins
     use 'I:/02 Areas/Dev/Lua/stackmap-example-plugin'
 
+    -- copilot testing
+    --use { "zbirenbaum/copilot.lua" }
+
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 

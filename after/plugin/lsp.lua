@@ -42,6 +42,22 @@ lsp.setup_nvim_cmp({
 })
 
 lsp.configure('lemminx', {
+    settings = {
+        xml = {
+            format = {
+                splitAttributes = true,
+                splitBeforeFirstAttribute = false,
+                indentAttributes = true,
+                splitAttributesIndentSize = 1,
+                spaceBeforeEmptyCloseTag = true,
+                preservedNewlines = 1,
+                emptyElements = 'collapse'
+            }
+        }
+        --["xml.format.splitAttributes"] = true,
+        --["xml.format.preserveAttributeLineBreaks"] = true,
+        --["xml.format.splitBeforeFirstAttribute"] = true,
+    },
     single_file_support = true,
     on_attach = function(client, bufnr)
         print('lemminx init')
