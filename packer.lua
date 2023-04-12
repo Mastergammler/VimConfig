@@ -60,7 +60,7 @@ return require('packer').startup(function(use)
         -- or                            , branch = '0.1.x',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
-    use { "lunarmodules/luaexpat", rocks = "expat" }
+    --use { "lunarmodules/luaexpat", rocks = "expat" }, rocks = "expat" }
 
     -- debugging
     use 'mfussenegger/nvim-dap'

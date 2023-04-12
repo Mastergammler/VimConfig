@@ -47,7 +47,7 @@ local function findFilePathUptree(searchFile, startSearchDir)
         if currentFileToCheck then break end
 
         -- TODO: check for >= dir if it fails for some reason?
-        assert(currentSearchDir ~= workspaceRootDir,
+        assert(#currentSearchDir > #workspaceRootDir,
             "Did not find the file " .. searchFile .. " within the scope of the workspace " .. workspaceRootDir)
         currentSearchDir = getParentDir(currentSearchDir)
     end

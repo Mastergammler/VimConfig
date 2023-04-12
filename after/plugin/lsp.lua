@@ -60,7 +60,7 @@ lsp.configure('lemminx', {
     },
     single_file_support = true,
     on_attach = function(client, bufnr)
-        print('lemminx init')
+        --print('lemminx init')
     end,
     -- FIXME: has no impact on the types
     filetypes = { "xml", "svg", "cshtml", "xaml" },
