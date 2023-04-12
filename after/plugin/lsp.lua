@@ -19,7 +19,6 @@ local lsp = require("lsp-zero")
 --})
 
 
-
 lsp.preset("recommended")
 
 lsp.ensure_installed({
@@ -30,11 +29,11 @@ lsp.ensure_installed({
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-        ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
     -- TODO: what is this for????
-        ['<M-Space>'] = cmp.mapping.complete(),
+    ['<M-Space>'] = cmp.mapping.complete(),
 })
 
 lsp.setup_nvim_cmp({
@@ -59,9 +58,6 @@ lsp.configure('lemminx', {
         --["xml.format.splitBeforeFirstAttribute"] = true,
     },
     single_file_support = true,
-    on_attach = function(client, bufnr)
-        --print('lemminx init')
-    end,
     -- FIXME: has no impact on the types
     filetypes = { "xml", "svg", "cshtml", "xaml" },
 })

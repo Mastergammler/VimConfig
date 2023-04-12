@@ -1,6 +1,4 @@
--- this is the way to load a file directly
--- local xmlUtils = dofile(vim.fn.stdpath('config') .. '\\examples\\nsTest\\testingFunctions.lua')
-local nsUtils = require('examples.nsTest.testingFunctions')
+local cssnip = require('tooling.snippets.cs-snip')
 
 local ls = require 'luasnip'
 local types = require 'luasnip.util.types'
@@ -23,7 +21,7 @@ ls.config.set_config {
 
     -- advanced stuff for later
     ext_opts = {
-            [types.choiceNode] = {
+        [types.choiceNode] = {
             active = {
                 virt_text = { { "<- Current choice", "Info" } },
             }
@@ -31,133 +29,21 @@ ls.config.set_config {
     }
 }
 
-
--- -------------------- FUNCTIONS --------------------
-
-
 -- ------------------------------- SNIPPETS ------------------------
 -- FIXME: loads every snippet multiple times / every time the file is sourced
 
 ls.add_snippets("all", {
     ls.parser.parse_snippet("/os", "-- testing other style!"),
-    --s('/ns', f(function() return nsUtils.getNamespace({ SearchPattern = "test.xml", XmlTag = "Root" }) end))
 })
 
-local csNamespaceNode = f(function()
-    local namespaceByFileLocation = nsUtils.getNamespace({ SearchPattern = "*.csproj", XmlTag = "RootNamespace" });
-    return "namespace " .. namespaceByFileLocation .. ";"
-end)
-
-local curExtensionlessBufname = f(function()
-    local buffname = vim.fn.bufname();
-    return vim.fn.fnamemodify(buffname, ":t:r")
-end)
-
-local classSnippet = function()
-    local namespaceByFileLocation = nsUtils.getNamespace({ SearchPattern = "*.csproj", XmlTag = "RootNamespace" });
-    local namspaceLine = "namespace " .. namespaceByFileLocation .. ";\n"
-    local curFilename = vim.fn.fnamemodify(vim.fn.bufname(), ":t:r")
-    return namspaceLine .. "pubilc class " .. curFilename .. "\n{\n\n}"
-end
-
-local writeToCurrentBuffer = function(text)
-    local currentBuffer = vim.api.nvim_get_current_buf();
-
-    local lines = {};
-    for line in string.gmatch(text, "[^\n]+") do
-        table.insert(lines, line)
-    end
-
-    vim.api.nvim_buf_set_lines(currentBuffer, 0, 1, true, lines)
-end
-
-local classExpander = function()
-    local classString = classSnippet()
-    writeToCurrentBuffer(classString)
-
-    return "";
-end
-
-local xamlStarter = [[
-<UserControl
-    x:Class="$"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:mvvm="http://prismlibrary.com/"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    mvvm:ViewModelLocator.AutoWireViewModel="True">
-
-</UserControl>
-]]
-
-local xamlCodeBehind = [[
-using System.Windows.Controls;
-
-$
-
-public partial class $ : UserControl
-{
-    public $()
-    {
-        InitializeComponent();
-    }
-}
-]]
-
-local writeToNewFile = function(filename, text)
-    local currentDir = vim.fn.expand("%:p:h")
-    local newFilePath = currentDir .. "/" .. filename
-
-    local file = io.open(newFilePath, "w")
-
-    assert(file, "The file " .. newFilePath .. " could not be created")
-
-    file:write(text)
-    file:close()
-end
-
-
-local xamlExpander = function()
-    local namespaceByFileLocation = nsUtils.getNamespace({ SearchPattern = "*.csproj", XmlTag = "RootNamespace" });
-    local fileNameWithoutSuffix = vim.fn.fnamemodify(vim.fn.bufname(), ":t:r")
-
-    local namespaceWFilename = namespaceByFileLocation .. "." .. fileNameWithoutSuffix;
-    local xaml = string.gsub(xamlStarter, "%$", namespaceWFilename)
-
-    writeToCurrentBuffer(xaml)
-
-    -- now create the code behind
-    local namespaceLine = "namespace " .. namespaceByFileLocation .. ";"
-    local codeBehindFileName = fileNameWithoutSuffix .. ".xaml.cs"
-
-    local replacements = { namespaceLine, fileNameWithoutSuffix, fileNameWithoutSuffix };
-    local index = 1; -- tables are 1 based indexes? yes appearently
-
-    local codeBehind = string.gsub(xamlCodeBehind, "%$", function(match)
-        local currentRepl = replacements[index]
-        index = index + 1
-        return currentRepl
-    end)
-    writeToNewFile(codeBehindFileName, codeBehind)
-
-    return ""
-end
-
-
 ls.add_snippets("xml", {
-    s('/class', f(classExpander)),
-    s('/xaml', f(xamlExpander))
+    s('/xaml', f(cssnip.expandXaml))
 })
 ls.add_snippets("cs", {
     ls.parser.parse_snippet("/sum", "/// <summary>\n///    $0\n/// </summary>"),
-    --ls.parser.parse_snippet("/class", classSnippet),
-    --s('/test', fmt("{}", { f(classSnippet) })),
 
-    -- { csNamespaceNode, t("class"), curExtensionlessBufname })
-    s('/ns', csNamespaceNode),
-    s("/class", f(classExpander)),
+    s('/ns', f(cssnip.expandNamespaceLine)),
+    s("/class", f(cssnip.expandClass)),
 
     -- FIXME: this is not working because of the whitespaces essentialy
     -- Or rather it is not formating the text correctly
@@ -204,6 +90,7 @@ ls.add_snippets("cs", {
 })
 
 ls.add_snippets("lua", {
+
     -- variable ref / $0 is the last jump point
     ls.parser.parse_snippet("/eg", "-- Defined in $TM_FILENAME $1\n$0\n"),
     -- repeat the first insert
@@ -234,10 +121,6 @@ vim.keymap.set({ "i", "s" }, "<M-.>", function()
         ls.change_choice(1)
     end
 end, { desc = "Show next snippet choice" })
-
-
-
-
 
 -- reload snippets after editing them / on windows
 vim.keymap.set("n", "<leader>so", "<cmd>source ~/appdata/local/nvim/after/plugin/luasnip.lua<CR>",
