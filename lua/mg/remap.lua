@@ -33,10 +33,10 @@ vim.keymap.set("n", "<leader>tc", vim.cmd.NvimTreeCollapse, { desc = "[T]ree [c]
 
 
 -- terminal
-vim.keymap.set("n", "<leader>tt", function()
-    -- this doesn't open the same buffer, i have to do this via session management
-    vim.cmd("sp term://sh")
-end, { desc = 'Opens a new terminal horizontally' })
+--vim.keymap.set("n", "<leader>tt", function()
+-- this doesn't open the same buffer, i have to do this via session management
+--   vim.cmd("sp term://sh")
+--end, { desc = 'Opens a new terminal horizontally' })
 vim.keymap.set("t", "``", "<C-\\><C-n>", { noremap = true, desc = 'Exits terminal insert mode' })
 
 -- editing
