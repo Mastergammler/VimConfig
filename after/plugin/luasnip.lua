@@ -21,7 +21,7 @@ ls.config.set_config {
 
     -- advanced stuff for later
     ext_opts = {
-        [types.choiceNode] = {
+            [types.choiceNode] = {
             active = {
                 virt_text = { { "<- Current choice", "Info" } },
             }
@@ -43,7 +43,7 @@ ls.add_snippets("cs", {
     ls.parser.parse_snippet("/sum", "/// <summary>\n///    $0\n/// </summary>"),
 
     s('/ns', f(cssnip.expandNamespaceLine)),
-    s("/class", f(cssnip.expandClass)),
+    s("/new", f(cssnip.expandClass)),
 
     -- FIXME: this is not working because of the whitespaces essentialy
     -- Or rather it is not formating the text correctly

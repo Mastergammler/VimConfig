@@ -22,6 +22,6 @@ local writeToNewFile = function(filename, text)
 end
 
 return {
-    writeToCurrentbuffer = writeToCurrentBuffer,
+    writeToCurrentBuffer = writeToCurrentBuffer,
     writeToNewFile = writeToNewFile
 }

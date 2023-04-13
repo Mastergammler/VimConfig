@@ -30,22 +30,40 @@ public partial class $ : UserControl
 }
 ]]
 
+local classTemplate = [[
+$
+
+public class $
+{
+    public $()
+    {
+
+    }
+}
+]]
+
 local namespaceLine = function()
     local namespaceByFileLocation = nsUtils.getNamespace({ SearchPattern = "*.csproj", XmlTag = "RootNamespace" });
     return "namespace " .. namespaceByFileLocation .. ";"
-end
-
-local classSnippet = function()
-    local namspaceLine = namespaceLine() .. "\n"
-    local curFilename = vim.fn.fnamemodify(vim.fn.bufname(), ":t:r")
-    return namspaceLine .. "pubilc class " .. curFilename .. "\n{\n\n}"
 end
 
 -- ------------ HACK: injection via lua snippets ------------------
 
 -- creates a empty class file with it's namespace
 local classExpander = function()
-    bufferWriter.writeToCurrentBuffer(classSnippet())
+    local namespaceLine = namespaceLine();
+    local fileNameWithoutSuffix = vim.fn.fnamemodify(vim.fn.bufname(), ":t:r")
+
+    local replacements = { namespaceLine, fileNameWithoutSuffix, fileNameWithoutSuffix }
+    local index = 1;
+
+    local snippet = string.gsub(classTemplate, "%$", function(match)
+        local current = replacements[index];
+        index = index + 1
+        return current
+    end)
+
+    bufferWriter.writeToCurrentBuffer(snippet)
     return "";
 end
 
