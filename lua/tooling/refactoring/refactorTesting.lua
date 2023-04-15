@@ -27,10 +27,12 @@ function gitMoveCurrent()
     vim.cmd.w()
 
     local thif_fullPath = vim.fn.expand("%:p")
-    local thif_dir = vim.fn.fnamemodify(thif_fullPath, ":h") .. "\\"
+    local thif_dir = vim.fn.fnamemodify(thif_fullPath, ":h") .. "/"
 
     vim.ui.input({ prompt = "New path: ", default = thif_dir, completion = "file" }, function(input)
-        local res = vim.fn.systemlist("git mv " .. thif_fullPath .. " " .. input)
+        local res = vim.fn.systemlist("git mv "
+            .. string.format("'%s'", thif_fullPath) .. " "
+            .. string.format("'%s'", input))
 
         -- no response from the git action means success
         if res[1] == nil then
@@ -38,6 +40,7 @@ function gitMoveCurrent()
             vim.cmd.e(input)
         else
             -- in any other case it returns the error message
+            P(res)
             error(res[1] .. "\nTarget was: " .. input)
         end
     end)
@@ -56,7 +59,7 @@ end
 
 function isThisGitTracked()
     local filePath = vim.fn.expand("%:p")
-    local gitStatus = vim.fn.systemlist("git ls-files " .. filePath)
+    local gitStatus = vim.fn.systemlist("git ls-files " .. string.format("'%s'", filePath))
 
     if gitStatus[1] ~= nil then
         return true

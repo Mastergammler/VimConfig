@@ -1,6 +1,6 @@
 local function getBufferFilePath()
     local bufferFilePath = vim.api.nvim_buf_get_name(0);
-    print("curBuf-FilePath", bufferFilePath)
+    print("CurrentBuffer detected filepath: ", bufferFilePath)
     return bufferFilePath
 end
 
@@ -104,11 +104,16 @@ end
 local function getFileNamespace(opt)
     local operationStart = os.clock()
 
-    local currentFilePath = getBufferFilePath()
-    local startSearchDir = getParentDir(currentFilePath)
+    if opt.TargetFilePath == nil then
+        opt.TargetFilePath = getBufferFilePath()
+    end
+
+    print("TargetFilePath: ", opt.TargetFilePath)
+
+    local startSearchDir = getParentDir(opt.TargetFilePath)
     local searchFile = findFilePathUptree(opt.SearchPattern, startSearchDir)
     local xmlSpecifiedNamespace = readTagFromXml(searchFile, opt.XmlTag)
-    local namespace = buildCurrentFileNamespace(currentFilePath, searchFile, xmlSpecifiedNamespace)
+    local namespace = buildCurrentFileNamespace(opt.TargetFilePath, searchFile, xmlSpecifiedNamespace)
 
     local operationEnd = os.clock()
     showExecutionTime(operationStart, operationEnd)
@@ -116,10 +121,7 @@ local function getFileNamespace(opt)
     return namespace
 end
 
--- debug etc
--- print(getFileNamespace({ SearchPattern = "*.xml", XmlTag = "Root" }))
-
 return {
     getNamespace = getFileNamespace,
-    parentDirOf = getParentDir
+    parentDirOf = getParentDir,
 }

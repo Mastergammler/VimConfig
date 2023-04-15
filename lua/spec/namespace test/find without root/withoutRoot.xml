@@ -1,0 +1,12 @@
+<SomeProperty>
+
+    <InnerProperty>
+        <Value>MyValue</Value>
+    </InnerProperty>
+
+    <InnerProperty>
+        <Value>AnotherValue</Value>
+        <Root>Com.Nvim.Lua.Test</Root>
+    </InnerProperty>
+
+</SomeProperty>
