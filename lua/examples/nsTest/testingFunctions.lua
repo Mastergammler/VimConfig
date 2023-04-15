@@ -19,7 +19,12 @@ local function examples(filePath)
     print(relDir)
 end
 
--- gets the parent from either a file or directory
+--[[
+Gets the parent directory from either a file or directory
+This is just a string modification function, it doens't actually check for existing paths
+
+@param path (string) The path from which to get the parent directory from
+]]
 local function getParentDir(path)
     return vim.fn.fnamemodify(path, ":h")
 end
@@ -46,7 +51,6 @@ local function findFilePathUptree(searchFile, startSearchDir)
         currentFileToCheck = searchPatternInDir(searchFile, currentSearchDir)
         if currentFileToCheck then break end
 
-        -- TODO: check for >= dir if it fails for some reason?
         assert(#currentSearchDir > #workspaceRootDir,
             "Did not find the file " .. searchFile .. " within the scope of the workspace " .. workspaceRootDir)
         currentSearchDir = getParentDir(currentSearchDir)
@@ -67,9 +71,12 @@ local function readTagFromXml(path, xmlTag)
     local startFirst_idx, startLast_idx = xmlData:find("<" .. xmlTag .. ">")
     local endFirst_idx, _ = xmlData:find("</" .. xmlTag .. ">")
 
-    assert(startFirst_idx ~= nil, "ERROR: Tag " .. xmlTag .. " not fonud in " .. path)
-
-    return xmlData:sub(startLast_idx + 1, endFirst_idx - 1);
+    if startFirst_idx ~= nil then
+        return xmlData:sub(startLast_idx + 1, endFirst_idx - 1)
+    else
+        warning("Tag " .. xmlTag .. " not fonud in " .. path)
+        return ""
+    end
 end
 
 local function buildCurrentFileNamespace(currentFile, searchFile, rootNamespace)
@@ -80,7 +87,11 @@ local function buildCurrentFileNamespace(currentFile, searchFile, rootNamespace)
     -- dunno why the length doesn't correspond to the next char
     local relNamespace = currentFileNs:sub(#projectFileNs + 2)
 
-    return rootNamespace .. "." .. relNamespace
+    if #rootNamespace > 0 then
+        return rootNamespace .. "." .. relNamespace
+    else
+        return relNamespace
+    end
 end
 
 local function showExecutionTime(startTime, finishedTime)
@@ -109,5 +120,6 @@ end
 -- print(getFileNamespace({ SearchPattern = "*.xml", XmlTag = "Root" }))
 
 return {
-    getNamespace = getFileNamespace
+    getNamespace = getFileNamespace,
+    parentDirOf = getParentDir
 }
