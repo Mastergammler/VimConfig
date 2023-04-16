@@ -21,7 +21,7 @@ ls.config.set_config {
 
     -- advanced stuff for later
     ext_opts = {
-            [types.choiceNode] = {
+        [types.choiceNode] = {
             active = {
                 virt_text = { { "<- Current choice", "Info" } },
             }
