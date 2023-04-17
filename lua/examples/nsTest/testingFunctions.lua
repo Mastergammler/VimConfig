@@ -101,17 +101,18 @@ local function showExecutionTime(startTime, finishedTime)
     print(string.format("The operation took %d ms", timeMillsecond));
 end
 
-local function getFileNamespace(opt)
-    local operationStart = os.clock()
-
+-- opts {TargetfilePath?, SearchPattern}
+local function findProjectFile(opt)
     if opt.TargetFilePath == nil then
         opt.TargetFilePath = getBufferFilePath()
     end
-
-    print("TargetFilePath: ", opt.TargetFilePath)
-
     local startSearchDir = getParentDir(opt.TargetFilePath)
-    local searchFile = findFilePathUptree(opt.SearchPattern, startSearchDir)
+    return findFilePathUptree(opt.SearchPattern, startSearchDir)
+end
+
+local function getFileNamespace(opt)
+    local operationStart = os.clock()
+    local searchFile = findProjectFile(opt)
     local xmlSpecifiedNamespace = readTagFromXml(searchFile, opt.XmlTag)
     local namespace = buildCurrentFileNamespace(opt.TargetFilePath, searchFile, xmlSpecifiedNamespace)
 
@@ -124,4 +125,5 @@ end
 return {
     getNamespace = getFileNamespace,
     parentDirOf = getParentDir,
+    findProjectFile = findProjectFile
 }
