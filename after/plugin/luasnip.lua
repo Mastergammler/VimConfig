@@ -21,7 +21,7 @@ ls.config.set_config {
 
     -- advanced stuff for later
     ext_opts = {
-        [types.choiceNode] = {
+            [types.choiceNode] = {
             active = {
                 virt_text = { { "<- Current choice", "Info" } },
             }
@@ -123,7 +123,7 @@ vim.keymap.set({ "i", "s" }, "<M-.>", function()
 end, { desc = "Show next snippet choice" })
 
 -- reload snippets after editing them / on windows
-vim.keymap.set("n", "<leader>so", "<cmd>source ~/appdata/local/nvim/after/plugin/luasnip.lua<CR>",
-    { desc = "relaod snippets after change" })
+vim.keymap.set("n", "<leader>so", "<cmd>luafile ~/appdata/local/nvim/init.lua<CR>",
+    { desc = "reload nvim config" })
 
 print("Snippets reloaded!")
