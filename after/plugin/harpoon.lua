@@ -33,3 +33,9 @@ end
 vim.keymap.set("n", "<C-B>", function() sendDotnetCommand("build", 1) end, { desc = "[B]uild project" })
 vim.keymap.set("n", "<C-R>", function() sendDotnetCommand("run", 1) end, { desc = "[R]un project" })
 vim.keymap.set("n", "<C-T>", function() sendDotnetCommand("test", 2) end, { desc = "[T]est project" })
+vim.keymap.set("n", "<leader>tf", function()
+    local curFileName = vim.fn.fnamemodify(vim.fn.bufname(), ":t:r")
+    local cmd = "test " .. "--filter " .. curFileName
+    sendDotnetCommand(cmd, 2)
+    print("Start testing ", curFileName)
+end, { desc = "[t]est [f]ile - runs dotnet test for the file" })

@@ -3,7 +3,8 @@ local query = require 'vim.treesitter.query'
 
 require 'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all" (the four listed parsers should always be installed)
-    ensure_installed = { "c", "lua", "vim", "help", "cpp", "javascript", "typescript", "json", "java", "haskell", "html", "c_sharp" },
+    ensure_installed = { "c", "lua", "vim", "help", "cpp", "javascript", "typescript", "json", "java", "haskell", "html",
+        "c_sharp" },
 
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
@@ -17,6 +18,9 @@ require 'nvim-treesitter.configs'.setup {
     highlight = {
         enable = true,
         additional_vim_regex_highlighting = false,
+        disable = function(lang, bufnr)
+            return lang == "sql" and vim.api.nvim_buf_line_count(bufnr) > 500
+        end
     },
 
     query_linter = {
