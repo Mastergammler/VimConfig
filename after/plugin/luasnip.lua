@@ -17,7 +17,7 @@ ls.config.set_config {
     updateevents = "TextChanged, TextChangedI",
 
     -- what are those?
-    enable_autosnippets = true,
+    enable_autosnippets = false,
 
     -- advanced stuff for later
     ext_opts = {
@@ -41,9 +41,27 @@ ls.add_snippets("xml", {
 })
 ls.add_snippets("cs", {
     ls.parser.parse_snippet("/sum", "/// <summary>\n///    $0\n/// </summary>"),
+    ls.parser.parse_snippet("/mst", [[
+        [TestMethod]
+        public void Test$1()
+        {
+            //--------------------
+            //  Given
+            $2
+
+            //--------------------
+            //  When
+            $3
+
+            //--------------------
+            //  Then
+            $4
+        }
+        $0
+    ]]),
 
     s('/ns', f(cssnip.expandNamespaceLine)),
-    s("/new", f(cssnip.expandClass)),
+    s("/class", f(cssnip.expandClass)),
 
     -- FIXME: this is not working because of the whitespaces essentialy
     -- Or rather it is not formating the text correctly
