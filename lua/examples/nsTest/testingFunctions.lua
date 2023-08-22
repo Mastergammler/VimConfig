@@ -125,5 +125,6 @@ end
 return {
     getNamespace = getFileNamespace,
     parentDirOf = getParentDir,
-    findProjectFile = findProjectFile
+    findProjectFile = findProjectFile,
+    printExecutionTime = showExecutionTime
 }

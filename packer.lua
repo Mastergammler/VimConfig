@@ -6,7 +6,7 @@ vim.cmd [[packadd packer.nvim]]
 
 return require('packer').startup(function(use)
     -- Own dev plugins
-    use 'I:/02 Areas/Dev/Lua/stackmap-example-plugin'
+    --use 'I:/02 Areas/Dev/Lua/stackmap-example-plugin'
 
     -- copilot testing
     --use { "zbirenbaum/copilot.lua" }
@@ -14,7 +14,7 @@ return require('packer').startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
 
-    use 'nvim-tree/nvim-tree.lua'
+    -- use 'nvim-tree/nvim-tree.lua'
 
     -- visual stuff
     use {

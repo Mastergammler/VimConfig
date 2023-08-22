@@ -1,3 +1,6 @@
+local startTime = os.clock();
+local nsUtils = require('examples.nsTest.testingFunctions')
+
 local rainbow = require 'ts-rainbow'
 local query = require 'vim.treesitter.query'
 
@@ -59,3 +62,7 @@ require 'nvim-treesitter.configs'.setup {
 }
 
 query.set_query('lua', "injections", "(comment) @field")
+
+local endTime = os.clock()
+--nsUtils.printExecutionTime(startTime, endTime)
+--print("TS-time")

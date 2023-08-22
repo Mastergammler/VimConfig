@@ -68,4 +68,4 @@ function isThisGitTracked()
     end
 end
 
-vim.keymap.set("n", "<leader>tt", gitMoveCurrent, { desc = "[t]est [t]est" })
+--vim.keymap.set("n", "<leader>tt", gitMoveCurrent, { desc = "[t]est [t]est" })

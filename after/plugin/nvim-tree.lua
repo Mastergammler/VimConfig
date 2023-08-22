@@ -1,8 +1,7 @@
 -- I don't want it to show up at startup
 --vim.g.nvim_tree_hijack_netrw = false
 
-require("nvim-tree").setup
-{
+--[[require("nvim-tree").setup {
     sort_by = "case_sensitive",
     renderer = {
         group_empty = true,
@@ -13,12 +12,12 @@ require("nvim-tree").setup
             "**/bin",
             "**/obj"
         }
-
     },
     disable_netrw = false,
     hijack_cursor = false,
     hijack_netrw = false,
     hijack_unnamed_buffer_when_opening = false,
-    open_on_setup = false,
-    open_on_setup_file = false,
-}
+    --open_on_setup = false,
+    --open_on_setup_file = false,
+}]]
+    --

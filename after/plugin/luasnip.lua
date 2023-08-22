@@ -126,4 +126,4 @@ end, { desc = "Show next snippet choice" })
 vim.keymap.set("n", "<leader>so", "<cmd>luafile ~/appdata/local/nvim/init.lua<CR>",
     { desc = "reload nvim config" })
 
-print("Snippets reloaded!")
+--print("Snippets reloaded!")
