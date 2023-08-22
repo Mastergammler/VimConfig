@@ -51,6 +51,9 @@ local function findFilePathUptree(searchFile, startSearchDir)
         currentFileToCheck = searchPatternInDir(searchFile, currentSearchDir)
         if currentFileToCheck then break end
 
+        if #currentSearchDir <= #workspaceRootDir then
+            return nil
+        end
         assert(#currentSearchDir > #workspaceRootDir,
             "Did not find the file " .. searchFile .. " within the scope of the workspace " .. workspaceRootDir)
         currentSearchDir = getParentDir(currentSearchDir)
