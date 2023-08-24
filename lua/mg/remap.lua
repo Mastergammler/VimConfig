@@ -38,6 +38,10 @@ vim.keymap.set("n", "<leader>tc", vim.cmd.NvimTreeCollapse, { desc = "[T]ree [c]
 --   vim.cmd("sp term://sh")
 --end, { desc = 'Opens a new terminal horizontally' })
 vim.keymap.set("t", "``", "<C-\\><C-n>", { noremap = true, desc = 'Exits terminal insert mode' })
+vim.keymap.set({ "n" }, "`,", "<C-\\><C-n><C-w>wa",
+    { noremap = true, desc = 'Jumps from one [w]indow to the next [w]indow' })
+vim.keymap.set({ "t" }, "`,", "<C-\\><C-n><C-w>w",
+    { noremap = true, desc = 'Jumps from one [w]indow to the next [w]indow' })
 
 -- editing
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = 'Moves the current selection one line up' })
