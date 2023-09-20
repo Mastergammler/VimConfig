@@ -4,9 +4,14 @@
 -- 3. accumulate paths & names
 -- 4. make the choose menu for it
 
-print("Loading projectsearch")
+--[[
+    The goal is to search for projects in the root directory
+    To not always have to be on a file in the project i have to execute
+    But have a simple dialogue with which i can choose the project to execute
 
-
+    For run  or test projects equally
+    Just a simple select dialogue with numbers 1,2,3 etc
+]]
 function execTest()
     local rootDir = vim.fn.getcwd();
     print('Root dir: ', rootDir)
@@ -18,18 +23,13 @@ function execTest()
         print("No files found")
     end
 
-    print("Found " .. #luaFiles .. " lua files")
-
     for _, file in ipairs(luaFiles) do
         print(file)
     end
 
-    print('finished')
+    print("Found " .. #luaFiles .. " lua files")
 end
 
---[[return {
-    getRootDir = getRootDir
-}]]
---
-
-vim.keymap.set("n", "<leader>tt", execTest, { desc = "[t]est [t]est" })
+return {
+    getRootDir = execTest
+}

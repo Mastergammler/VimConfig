@@ -61,7 +61,7 @@ require 'nvim-treesitter.configs'.setup {
     }
 }
 
-query.set_query('lua', "injections", "(comment) @field")
+--query.set_query('lua', "injections", "(comment) @field")
 
 local endTime = os.clock()
 --nsUtils.printExecutionTime(startTime, endTime)

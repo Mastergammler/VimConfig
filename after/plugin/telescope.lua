@@ -5,9 +5,9 @@ tele.setup {
     defaults = {
         mappings = {
             i = {
-                    ["<C-j>"] = require('telescope.actions').move_selection_next,
-                    ["<C-k>"] = require('telescope.actions').move_selection_previous,
-                    ["<C-x>"] = require('telescope.actions').select_default
+                ["<C-j>"] = require('telescope.actions').move_selection_next,
+                ["<C-k>"] = require('telescope.actions').move_selection_previous,
+                ["<C-x>"] = require('telescope.actions').select_default
             },
         },
         layout_config = {
