@@ -2,7 +2,6 @@ local startTime = os.clock();
 local nsUtils = require('examples.nsTest.testingFunctions')
 
 local rainbow = require 'ts-rainbow'
-local query = require 'vim.treesitter.query'
 
 require 'nvim-treesitter.configs'.setup {
     -- A list of parser names, or "all" (the four listed parsers should always be installed)

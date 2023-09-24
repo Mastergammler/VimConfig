@@ -22,6 +22,7 @@ vim.keymap.set("n", "<leader>wk", "<C-w>k", { noremap = true, desc = "Jump [W]in
 vim.keymap.set("n", "<leader>wl", "<C-w>l", { noremap = true, desc = "Jump [W]indow right" })
 vim.keymap.set("n", "<leader>wh", "<C-w>h", { noremap = true, desc = "Jump [W]indow left" })
 vim.keymap.set("n", "<leader>w/", vim.cmd.vs, { noremap = true, desc = "Split window to the right" })
+vim.keymap.set("n", "<leader>w-", vim.cmd.split, { noremap = true, desc = "Split window to bottom" })
 
 -- tree stuff
 vim.keymap.set("n", "<leader>lf", vim.cmd.NvimTreeToggle, { desc = "[L]ist [F]iles (NvimTree)" })
