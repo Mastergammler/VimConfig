@@ -69,6 +69,31 @@ function highlightStuff(lines)
     --vim.api.nvim_buf_add_highlight(outputBuffer, 0, "Function", 2, 7, 25);
 end
 
+-- how a stack works in lua
+-- table remove just removes the last one
+-- very interesting
+function howToStack()
+    local stack = {}
+
+    function push(element)
+        table.insert(stack, element)
+    end
+
+    function pop()
+        return table.remove(stack)
+    end
+
+    push(1)
+    push(2)
+    push(3)
+
+    P(stack)
+
+    print(pop())
+    print(pop())
+    print(pop())
+end
+
 function test()
     local startTime = os.clock();
     local lines = loadFileInLines()

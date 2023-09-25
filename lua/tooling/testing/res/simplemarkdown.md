@@ -7,6 +7,12 @@
 - my second point
 - my third point
 
+## Some of my todos
+- [ ] my first task
+- [ ] my second task
+- [x] done task 1
+- [x] done task 2
+
 ```dataview
 special section with special code
 should be handled in a special manner
