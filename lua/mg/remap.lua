@@ -12,8 +12,6 @@ end, { silent = true, desc = '[F]ile [s]ave (saves and runs lsp format)' })
 --vim.keymap.set("n", "N", "Nzzzv", { desc = 'Stay in middle during Previous text search result' })
 vim.keymap.set("n", "<C-h>", vim.cmd.bprevious, { desc = 'Open previous buffer' })
 vim.keymap.set("n", "<C-l>", vim.cmd.bnext, { desc = 'Open next buffer' })
--- TODO: maybe change this now becaues L is now list
-vim.keymap.set("n", "<leader>l", vim.cmd.nohlsearch, { desc = 'Deselects highlights after searching' })
 
 vim.keymap.set("n", "<leader>wd", vim.cmd.close, { noremap = true, desc = '[W]indow [d]elete - closes the window' })
 vim.keymap.set("n", "<leader>ww", "<C-w>w", { noremap = true, desc = 'Jumps from one [w]indow to the next [w]indow' })
@@ -31,6 +29,16 @@ vim.keymap.set("n", "<leader>cf", function()
     vim.cmd.NvimTreeFocus()
 end, { desc = "[C]urrent [F]ile (NvimTree)" })
 vim.keymap.set("n", "<leader>tc", vim.cmd.NvimTreeCollapse, { desc = "[T]ree [c]ollapse (NvimTree)" })
+
+local function highlightCurrentWord()
+    local searchWord = vim.fn.expand("<cword>")
+    vim.cmd(string.format("/%s", searchWord))
+end
+
+vim.keymap.set("n", "<leader>hl", highlightCurrentWord, { desc = "[h]igh[l]ight current word" })
+-- TODO: maybe change this now becaues L is now list
+vim.keymap.set("n", "<leader>ho", vim.cmd.nohlsearch, { desc = "[h]ighlight [o]ff - deselect highlight" })
+
 
 
 -- terminal
@@ -89,7 +97,6 @@ vim.keymap.set("n", "<leader>xx", function()
     end,
     { desc = "Runs the current file (similar to SO)" })
 vim.keymap.set("n", "<leader>rt", "<Plug>PlenaryTestFile", { desc = "[r]un [t]ests for the current file" })
-
 
 
 -- yanking to clipboard
