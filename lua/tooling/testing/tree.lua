@@ -1,4 +1,15 @@
--- package.loaded['tooling.testing.fileloader'] = nil
+-- Basic highlighting is working
+-- Basic syntax tree is created
+--
+-- TODO:
+-- - [ ] introduce line end termiators
+-- - [ ] handling for ``` and single `
+--
+-- FIXME:
+-- - [ ] empty line is detected within the current node
+-- -> this prevents correct ending of the previous line
+-- - [ ] last line is not detected correctly (because -1 doesn't work)
+--
 local file = require('tooling.testing.fileloader')
 local nsUtils = require('examples.nsTest.testingFunctions')
 
@@ -7,10 +18,6 @@ local NodeType = {
     SECTION = 0x2,
 }
 
--- these would me matched by start?
--- some elements have same start and end / others have different start and end
--- maybe just map single elements? And then look at the tree?
--- would make also sense for heading stuff, then just have some kind of count of it?
 local SyntaxElements = {
     H1 = '#',
     LI = '-',
@@ -22,8 +29,14 @@ local SyntaxElements = {
     --NL = '\n'
 }
 
-local SyntaxMap = {
-    LINK = { SyntaxElements.LINK_OPEN, SyntaxElements.LINK_CLOSE }
+local ElementType = {
+    LINK = 0x1,
+    OTHER = 0x2
+}
+
+local SemanticMap = {
+    [SyntaxElements.LINK_OPEN] = ElementType.LINK,
+    [SyntaxElements.LINK_CLOSE] = ElementType.LINK
 }
 
 local tree = {
@@ -78,7 +91,13 @@ end
 
 function buffer_print(lineIndex, text)
     -- use this to append at the end of the buffer
+    -- NOTE: -1 as first line skips the first line somehow (because it always appends?)
+    -- so the first line stays empty?
     vim.api.nvim_buf_set_lines(outputBuffer, -1, -1, false, { text })
+end
+
+function buffer_write_lines(lines)
+    vim.api.nvim_buf_set_lines(outputBuffer, 0, -1, false, lines)
 end
 
 -- creating the tree
@@ -112,9 +131,6 @@ end
 
 function close_node(curNode, lineNo, columnNo)
     if curNode.element_type ~= nil then
-        -- buffer_print(-1, curNode.symbol_count .. "x" .. curNode.element_type)
-        --curNode.element_type = nil
-        --curNode.symbol_count = 0
         curNode.end_line = lineNo
         curNode.end_column = columnNo
         curNode.value = curNode.symbol_count .. "x" .. curNode.value
@@ -139,29 +155,53 @@ function next_child_node(previousNode, nextElement, lineNo, columnNo)
     return new
 end
 
+-- checks than opening and closing an element will count as the same
+function is_same_semantic_element(syntaxElementA, syntaxElementB)
+    if syntaxElementA == syntaxElementB then return true end
+
+    local valueA = get_symbol(syntaxElementA)
+    local valueB = get_symbol(syntaxElementB)
+    local syntaxA = SemanticMap[valueA]
+    local syntaxB = SemanticMap[valueB]
+
+    if syntaxA ~= nil then
+        return syntaxA == syntaxB
+    end
+
+    return false
+end
+
 -- somehow i don't like the dependance on lines
 -- it makes everything so complicated, instead of just sequence of chars
 -- because lines are more of a display concept right?
 function createMarkdownTree(lines)
     -- track the current node
     local curNode = tree;
+    local prevLineLength = 0
 
     for idx, line in ipairs(lines) do
         local lineIndex = idx - 1;
 
-        --buffer_print(bufferIdx, "--- " .. bufferIdx .. " ---");
-
-        -- FIXME: wrong char offset on switch
         for charIndex = 1, #line do
             local char = line:byte(charIndex)
             for key, symbol in pairs(SyntaxElements) do
                 if is_syntax_element(char, symbol) then
                     -- case same symbol again
-                    if curNode.element_type == key then
+                    if is_same_semantic_element(curNode.element_type, key) then
                         curNode.symbol_count = curNode.symbol_count + 1
                     elseif curNode.element_type ~= nil then
                         -- case symbol changed
-                        curNode = close_node(curNode, lineIndex, charIndex)
+                        local lineIdx = lineIndex
+                        -- it should be the previous char?
+                        local charIdx = charIndex - 1
+                        -- case were on the next line
+                        if charIndex == 1 then
+                            -- were actually supposed to end on the previous line
+                            lineIdx = lineIndex - 1
+                            -- previous line means we need to take the last one
+                            charIdx = prevLineLength -- - 1
+                        end
+                        curNode = close_node(curNode, lineIdx, charIdx)
                         -- register new symbol
                         curNode = next_child_node(curNode, key, lineIndex, charIndex)
                     else -- first detection of symbol
@@ -184,6 +224,8 @@ function createMarkdownTree(lines)
                 -- curNode = close_node(curNode, lineIndex, charIndex)
             end
         end
+
+        if #line > 0 then prevLineLength = #line end
     end
 
     -- close last node? (or all still open nodes?)
@@ -192,11 +234,47 @@ function createMarkdownTree(lines)
     return tree
 end
 
+function highlight_by_tree(root)
+    if root.children == nil then
+        return
+    end
+
+    for _, node in ipairs(root.children) do
+        -- FIXME: seems like -1 for end line is not working for highlight
+        -- TODO: different colors per type
+
+        -- NOTE: seems that the offset for the column is -1 from the actual text buffer
+        -- both lines and chars start at 0, but line:byte(1) gives you the first character
+        if node.start_line ~= node.end_line then
+            for lineNo = node.start_line, node.end_line do
+                local lastChar = -1
+                local firstChar = 0;
+
+                if lineNo == node.start_line then
+                    firstChar = node.start_column - 1
+                end
+                if lineNo == node.end_line then
+                    lastChar = node.end_column
+                end
+                vim.api.nvim_buf_add_highlight(outputBuffer, 0, "Function", lineNo, firstChar, lastChar)
+            end
+        else
+            -- single line mode
+            vim.api.nvim_buf_add_highlight(outputBuffer, 0, "Comment", node.start_line, node.start_column - 1,
+                node.end_column + 1)
+        end
+    end
+end
+
 function test()
-    local content = file.loadFileInLines();
-    local tree = createMarkdownTree(content);
     setupBuffer()
+
+    local contentLines = file.loadFileInLines();
+    local tree = createMarkdownTree(contentLines);
+
+    buffer_write_lines(contentLines)
     print_tree(tree, 0)
+    highlight_by_tree(tree)
 end
 
 local startTime = os.clock();
