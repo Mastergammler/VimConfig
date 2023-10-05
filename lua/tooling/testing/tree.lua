@@ -2,13 +2,16 @@
 -- Basic syntax tree is created
 --
 -- TODO:
--- - [ ] introduce line end termiators
--- - [ ] handling for ``` and single `
+-- - [x] introduce line end termiators
+-- - [x] multi line handling (``` etc)
+-- - [ ] handling for multi symbol stuff ( - [ ] )
+-- - [ ] handling for conditional stuff ( - [x] )
+-- - [ ] Ordered lists
+-- - [ ] color coding per type
 --
 -- FIXME:
--- - [ ] empty line is detected within the current node
--- -> this prevents correct ending of the previous line
--- - [ ] last line is not detected correctly (because -1 doesn't work)
+-- - [x] empty line is detected within the current node
+-- - [x] last line is not detected correctly (because -1 doesn't work)
 --
 local file = require('tooling.testing.fileloader')
 local nsUtils = require('examples.nsTest.testingFunctions')
@@ -29,6 +32,15 @@ local SyntaxElements = {
     --NL = '\n'
 }
 
+-- create a reverse lookup for easier access
+-- maybe an array structure would be better?
+-- but then i don't have as nice of access?
+-- -> I could, if i use another table as enum with values?
+local SE_ReverseLookup = {}
+for key, value in pairs(SyntaxElements) do
+    SE_ReverseLookup[value] = key
+end
+
 local ElementType = {
     LINK = 0x1,
     OTHER = 0x2
@@ -43,6 +55,15 @@ local tree = {
 
     -- print value representation for debugging
     value = "I am root",
+
+    -- flag that indicates, that inbetween the syntax elements of the node
+    -- there is text content, in order to know if i should close the node
+    has_content = false,
+
+    -- flag that indicates that the node has a start and an ending part
+    -- this should only occur when has_content is true as well
+    -- it is when we found the end matching section for a node
+    is_closed = false,
 
     -- how many symbols detected
     symbol_count = 0,
@@ -142,6 +163,8 @@ end
 
 function next_child_node(previousNode, nextElement, lineNo, columnNo)
     local new = {}
+    new.has_content = false
+    new.is_closed = false
     new.element_type = nextElement
     new.symbol_count = 1
     new.start_line = lineNo
@@ -156,7 +179,7 @@ function next_child_node(previousNode, nextElement, lineNo, columnNo)
 end
 
 -- checks than opening and closing an element will count as the same
-function is_same_semantic_element(syntaxElementA, syntaxElementB)
+function is_repeating_element(syntaxElementA, syntaxElementB)
     if syntaxElementA == syntaxElementB then return true end
 
     local valueA = get_symbol(syntaxElementA)
@@ -171,9 +194,52 @@ function is_same_semantic_element(syntaxElementA, syntaxElementB)
     return false
 end
 
--- somehow i don't like the dependance on lines
--- it makes everything so complicated, instead of just sequence of chars
--- because lines are more of a display concept right?
+-- this only works because we check before if it is actually a syntax element
+-- maybe i should make a distinction between syntax and other text elements?
+function is_different_element(previousElement)
+    if previousElement == nil then return false end
+    return true
+end
+
+function switch_to_next_node(activeNode, syntaxElement, lineIndex, charIndex, previousLineLength)
+    -- case symbol changed
+    local lineIdx = lineIndex
+    -- it should be the previous char?
+    local charIdx = charIndex - 1
+    -- case were on the next line
+    if charIndex == 1 then
+        -- were actually supposed to end on the previous line
+        lineIdx = lineIndex - 1
+        -- previous line means we need to take the last one
+        charIdx = previousLineLength -- - 1
+    end
+
+    activeNode = close_node(activeNode, lineIdx, charIdx)
+    -- register new symbol
+    return next_child_node(activeNode, syntaxElement, lineIndex, charIndex)
+end
+
+function increase_symbol_counter(node)
+    node.symbol_count = node.symbol_count + 1
+
+    -- if we revisit a node, that had text elements within it
+    -- that means we must have reached the end symbols
+    if node.has_content then
+        node.is_closed = true
+    end
+end
+
+function is_not_multi_line(node)
+    local syntaxValue = SyntaxElements[node.element_type];
+
+    if syntaxValue == SyntaxElements.CODE or
+        syntaxValue == SyntaxElements.COMMENT then
+        return false
+    end
+
+    return true
+end
+
 function createMarkdownTree(lines)
     -- track the current node
     local curNode = tree;
@@ -186,24 +252,10 @@ function createMarkdownTree(lines)
             local char = line:byte(charIndex)
             for key, symbol in pairs(SyntaxElements) do
                 if is_syntax_element(char, symbol) then
-                    -- case same symbol again
-                    if is_same_semantic_element(curNode.element_type, key) then
-                        curNode.symbol_count = curNode.symbol_count + 1
-                    elseif curNode.element_type ~= nil then
-                        -- case symbol changed
-                        local lineIdx = lineIndex
-                        -- it should be the previous char?
-                        local charIdx = charIndex - 1
-                        -- case were on the next line
-                        if charIndex == 1 then
-                            -- were actually supposed to end on the previous line
-                            lineIdx = lineIndex - 1
-                            -- previous line means we need to take the last one
-                            charIdx = prevLineLength -- - 1
-                        end
-                        curNode = close_node(curNode, lineIdx, charIdx)
-                        -- register new symbol
-                        curNode = next_child_node(curNode, key, lineIndex, charIndex)
+                    if is_repeating_element(curNode.element_type, key) then
+                        increase_symbol_counter(curNode)
+                    elseif is_different_element(curNode.element_type) then
+                        curNode = switch_to_next_node(curNode, key, lineIndex, charIndex, prevLineLength)
                     else -- first detection of symbol
                         curNode = next_child_node(curNode, key, lineIndex, charIndex)
                     end
@@ -211,17 +263,28 @@ function createMarkdownTree(lines)
                 end
             end
 
-            -- TODO: handling for 3x``` -> or rather open/close sections
+            -- case it didn't match any of the syntax elements
+            if char ~= nil then
+                if curNode.is_closed then
+                    -- -1 because this is the symbol after
+                    curNode = close_node(curNode, lineIndex, charIndex - 1)
+                else
+                    -- this means the current node, has at least one text element within it?
+                    -- TODO: handle text only nodes?
 
-            -- case, current is not another syntax symbol
-            -- in that case we don't wanna close?
-            -- curNode = close_node(curNode, lineIndex, charIndex)
+                    -- check if i'm actually in a syntax node
+                    if curNode.element_type ~= nil then
+                        curNode.has_content = true
+                    end
+                end
+            else
+                print("Unhandled case!")
+            end
+
             ::continue::
-            -- check the end, else last elements don't get printed'
-            -- this is also wrong? we don't want to do this for every line!!!
-            -- FIXME: some close at end of line, others don't
-            if charIndex == #line then
-                -- curNode = close_node(curNode, lineIndex, charIndex)
+
+            if charIndex == #line and is_not_multi_line(curNode) then
+                curNode = close_node(curNode, lineIndex, charIndex)
             end
         end
 
@@ -229,7 +292,7 @@ function createMarkdownTree(lines)
     end
 
     -- close last node? (or all still open nodes?)
-    close_node(curNode, -1, -1)
+    --close_node(curNode, -1, -1)
 
     return tree
 end
