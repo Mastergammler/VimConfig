@@ -1,5 +1,11 @@
 # This is just a heading
 
+## Some of my todos
+- [ ] my first task
+- [ ] my second task
+- [x] done task 1
+- [x] done task 2
+
 [[Linking to stuff]]
 
 **Lets do a list**
@@ -9,11 +15,7 @@
   - indented point
   - and even more
 
-## Some of my todos
-- [ ] my first task
-- [ ] my second task
-- [x] done task 1
-- [x] done task 2
+*How about something cursive?*
 
 [[ContineousLinkExample]]
 

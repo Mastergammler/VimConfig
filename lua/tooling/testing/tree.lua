@@ -1,13 +1,23 @@
 -- Basic highlighting is working
 -- Basic syntax tree is created
+-- Hilighting for each type is now adjustable
+--
+-- Basic Problem: multi symbol stuff has no affect
+--    but alot of elements are just inherently multi icon
+--    so that leads to problems, i don't a have a good solution for that atm
+--    this is what i need to figure out, then it will almost all work properly
+--    and then i can maybe even refactor it and do it properly
 --
 -- TODO:
 -- - [x] introduce line end termiators
 -- - [x] multi line handling (``` etc)
--- - [ ] handling for multi symbol stuff ( - [ ] )
--- - [ ] handling for conditional stuff ( - [x] )
+-- - [ ] proper handling for multi symbol parsing
+--   - [ ] Redo the start and end handling
+--   - [ ] Cases for Todo finished and not
+--   - [ ] Differences for single vs multiple occurences
+-- - [x] Color coding per type
+-- - [ ] Define own highlight groups
 -- - [ ] Ordered lists
--- - [ ] color coding per type
 --
 -- FIXME:
 -- - [x] empty line is detected within the current node
@@ -16,9 +26,29 @@
 local file = require('tooling.testing.fileloader')
 local nsUtils = require('examples.nsTest.testingFunctions')
 
+--- Node Type for coloring
 local NodeType = {
     ROOT = 0x1,
-    SECTION = 0x2,
+    COMMENT = 0x2,
+    CODE = 0x3,
+    LINK = 0x4,
+    ERROR = 0x5,
+    HEADING = 0x6,
+    TODO_OPEN = 0x7,
+    TODO_DONE = 0x8,
+    BOLD = 0x9
+}
+
+--- Mapping node types to highlight groups
+local NodeTypeColor = {
+    [NodeType.COMMENT] = "Comment",
+    [NodeType.CODE] = "StatusLineNC",
+    [NodeType.LINK] = "Function",
+    [NodeType.ERROR] = "ErrorMsg",
+    [NodeType.HEADING] = "WildMenu",
+    [NodeType.TODO_OPEN] = "@text.todo",
+    [NodeType.TODO_DONE] = "@string",
+    [NodeType.BOLD] = "Constant"
 }
 
 local SyntaxElements = {
@@ -32,6 +62,19 @@ local SyntaxElements = {
     --NL = '\n'
 }
 
+--- Mapping the syntax elements to node types
+--- only for the default / simple types
+local SyntaxToNodeType = {
+    [SyntaxElements.H1] = NodeType.HEADING,
+    [SyntaxElements.LI] = NodeType.COMMENT,
+    [SyntaxElements.BOLD] = NodeType.BOLD,
+    [SyntaxElements.CODE] = NodeType.CODE,
+    [SyntaxElements.LINK_OPEN] = NodeType.LINK,
+    [SyntaxElements.COMMENT] = NodeType.COMMENT
+}
+
+P(SyntaxToNodeType)
+
 -- create a reverse lookup for easier access
 -- maybe an array structure would be better?
 -- but then i don't have as nice of access?
@@ -43,14 +86,21 @@ end
 
 local ElementType = {
     LINK = 0x1,
-    OTHER = 0x2
+    LI = 0x2
 }
 
 local SemanticMap = {
     [SyntaxElements.LINK_OPEN] = ElementType.LINK,
-    [SyntaxElements.LINK_CLOSE] = ElementType.LINK
+    [SyntaxElements.LINK_CLOSE] = ElementType.LINK,
+    -- FIXME: this doesn't quite work right, need another solution
+    --[SyntaxElements.LI] = ElementType.LINK
 }
 
+--- Tree (Node)
+--- @type Node
+--- @field value string: Debugging value
+--- @field children Node[]: Children nodes of this tree element
+--- @field partent Node: Reference to the parent, nil for the root node
 local tree = {
 
     -- print value representation for debugging
@@ -64,6 +114,10 @@ local tree = {
     -- this should only occur when has_content is true as well
     -- it is when we found the end matching section for a node
     is_closed = false,
+
+    --- weather or not the type node is set customly
+    --- prevents the default setting at the end
+    custom_type = false,
 
     -- how many symbols detected
     symbol_count = 0,
@@ -155,6 +209,9 @@ function close_node(curNode, lineNo, columnNo)
         curNode.end_line = lineNo
         curNode.end_column = columnNo
         curNode.value = curNode.symbol_count .. "x" .. curNode.value
+        if not curNode.custom_type then
+            curNode.type = SyntaxToNodeType[SyntaxElements[curNode.element_type]]
+        end
 
         return curNode.parent
     end
@@ -172,6 +229,7 @@ function next_child_node(previousNode, nextElement, lineNo, columnNo)
     new.end_line = -1
     new.end_column = -1
     new.value = get_symbol(new.element_type)
+    new.type = NodeType.COMMENT
 
     add_child(previousNode, new)
 
@@ -219,8 +277,16 @@ function switch_to_next_node(activeNode, syntaxElement, lineIndex, charIndex, pr
     return next_child_node(activeNode, syntaxElement, lineIndex, charIndex)
 end
 
-function increase_symbol_counter(node)
+function increase_symbol_counter(node, syntaxElement)
     node.symbol_count = node.symbol_count + 1
+
+    if node.element_type ~= syntaxElement then
+        -- FIXME: this also affects the start and end handling
+        -- I need to rework the whole thing
+        --node.custom_type = true
+        -- TODO: more handling for different types
+        node.type = NodeType.TODO_DONE
+    end
 
     -- if we revisit a node, that had text elements within it
     -- that means we must have reached the end symbols
@@ -240,59 +306,69 @@ function is_not_multi_line(node)
     return true
 end
 
+--- Algorithm to determine how to parse the line into the node
+--- @param node Node: previous node
+--- @param line string: content of the current line
+--- @param lineIndex number: index of the line
+--- @param prevLineLength number: length of the previous line
+--- @return Node: the current or new node
+function parse_line_node(line, lineIndex, node, prevLineLength)
+    local curNode = node
+
+    for charIndex = 1, #line do
+        local char = line:byte(charIndex)
+        for key, symbol in pairs(SyntaxElements) do
+            if is_syntax_element(char, symbol) then
+                if is_repeating_element(curNode.element_type, key) then
+                    increase_symbol_counter(curNode, key)
+                elseif is_different_element(curNode.element_type) then
+                    curNode = switch_to_next_node(curNode, key, lineIndex, charIndex, prevLineLength)
+                else -- first detection of symbol
+                    curNode = next_child_node(curNode, key, lineIndex, charIndex)
+                end
+                goto continue
+            end
+        end
+
+        -- case it didn't match any of the syntax elements
+        if char ~= nil then
+            if curNode.is_closed then
+                -- -1 because this is the symbol after
+                curNode = close_node(curNode, lineIndex, charIndex - 1)
+            else
+                -- this means the current node, has at least one text element within it?
+                -- TODO: handle text only nodes?
+
+                -- check if i'm actually in a syntax node
+                if curNode.element_type ~= nil then
+                    curNode.has_content = true
+                end
+            end
+        else
+            print("Unhandled case!")
+        end
+
+        ::continue::
+
+        if charIndex == #line and is_not_multi_line(curNode) then
+            curNode = close_node(curNode, lineIndex, charIndex)
+        end
+    end
+
+    return curNode
+end
+
 function createMarkdownTree(lines)
-    -- track the current node
     local curNode = tree;
     local prevLineLength = 0
 
     for idx, line in ipairs(lines) do
         local lineIndex = idx - 1;
 
-        for charIndex = 1, #line do
-            local char = line:byte(charIndex)
-            for key, symbol in pairs(SyntaxElements) do
-                if is_syntax_element(char, symbol) then
-                    if is_repeating_element(curNode.element_type, key) then
-                        increase_symbol_counter(curNode)
-                    elseif is_different_element(curNode.element_type) then
-                        curNode = switch_to_next_node(curNode, key, lineIndex, charIndex, prevLineLength)
-                    else -- first detection of symbol
-                        curNode = next_child_node(curNode, key, lineIndex, charIndex)
-                    end
-                    goto continue
-                end
-            end
-
-            -- case it didn't match any of the syntax elements
-            if char ~= nil then
-                if curNode.is_closed then
-                    -- -1 because this is the symbol after
-                    curNode = close_node(curNode, lineIndex, charIndex - 1)
-                else
-                    -- this means the current node, has at least one text element within it?
-                    -- TODO: handle text only nodes?
-
-                    -- check if i'm actually in a syntax node
-                    if curNode.element_type ~= nil then
-                        curNode.has_content = true
-                    end
-                end
-            else
-                print("Unhandled case!")
-            end
-
-            ::continue::
-
-            if charIndex == #line and is_not_multi_line(curNode) then
-                curNode = close_node(curNode, lineIndex, charIndex)
-            end
-        end
+        curNode = parse_line_node(line, lineIndex, curNode, prevLineLength)
 
         if #line > 0 then prevLineLength = #line end
     end
-
-    -- close last node? (or all still open nodes?)
-    --close_node(curNode, -1, -1)
 
     return tree
 end
@@ -304,8 +380,6 @@ function highlight_by_tree(root)
 
     for _, node in ipairs(root.children) do
         -- FIXME: seems like -1 for end line is not working for highlight
-        -- TODO: different colors per type
-
         -- NOTE: seems that the offset for the column is -1 from the actual text buffer
         -- both lines and chars start at 0, but line:byte(1) gives you the first character
         if node.start_line ~= node.end_line then
@@ -319,11 +393,13 @@ function highlight_by_tree(root)
                 if lineNo == node.end_line then
                     lastChar = node.end_column
                 end
-                vim.api.nvim_buf_add_highlight(outputBuffer, 0, "Function", lineNo, firstChar, lastChar)
+                local highlightGroup = NodeTypeColor[node.type]
+                vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, lineNo, firstChar, lastChar)
             end
         else
             -- single line mode
-            vim.api.nvim_buf_add_highlight(outputBuffer, 0, "Comment", node.start_line, node.start_column - 1,
+            local highlightGroup = NodeTypeColor[node.type]
+            vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, node.start_line, node.start_column - 1,
                 node.end_column + 1)
         end
     end
@@ -332,7 +408,7 @@ end
 function test()
     setupBuffer()
 
-    local contentLines = file.loadFileInLines();
+    local contentLines = file.loadFileInLines(false);
     local tree = createMarkdownTree(contentLines);
 
     buffer_write_lines(contentLines)
