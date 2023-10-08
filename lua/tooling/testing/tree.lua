@@ -22,9 +22,6 @@
 -- FIXME:
 -- - [x] empty line is detected within the current node
 -- - [x] last line is not detected correctly (because -1 doesn't work)
---
-local file = require('tooling.testing.fileloader')
-local nsUtils = require('examples.nsTest.testingFunctions')
 
 --- Node Type for coloring
 local NodeType = {
@@ -151,30 +148,6 @@ function add_child(node, childNode)
     table.insert(node.children, childNode);
 end
 
--- printing stuff
-
-local outputBuffer = nil;
-
-function setupBuffer()
-    if not outputBuffer then
-        outputBuffer = vim.api.nvim_create_buf(true, false)
-    end
-
-    vim.api.nvim_command("belowright split")
-    vim.api.nvim_command("buffer " .. outputBuffer)
-end
-
-function buffer_print(lineIndex, text)
-    -- use this to append at the end of the buffer
-    -- NOTE: -1 as first line skips the first line somehow (because it always appends?)
-    -- so the first line stays empty?
-    vim.api.nvim_buf_set_lines(outputBuffer, -1, -1, false, { text })
-end
-
-function buffer_write_lines(lines)
-    vim.api.nvim_buf_set_lines(outputBuffer, 0, -1, false, lines)
-end
-
 -- creating the tree
 
 function is_syntax_element(char, syntax)
@@ -183,25 +156,6 @@ end
 
 function get_symbol(key)
     return SyntaxElements[key]
-end
-
-function node_info_string(node)
-    local nodeStr = "";
-    nodeStr = nodeStr .. node.value
-    nodeStr = nodeStr .. " l " .. node.start_line .. ".." .. node.end_line
-    nodeStr = nodeStr .. " c " .. node.start_column .. ".." .. node.end_column
-
-    return nodeStr
-end
-
-function print_tree(tree, indent)
-    buffer_print(-1, string.rep("    ", indent) .. node_info_string(tree))
-
-    if tree.children ~= nil then
-        for idx, node in ipairs(tree.children) do
-            print_tree(node, indent + 1)
-        end
-    end
 end
 
 function close_node(curNode, lineNo, columnNo)
@@ -373,50 +327,7 @@ function createMarkdownTree(lines)
     return tree
 end
 
-function highlight_by_tree(root)
-    if root.children == nil then
-        return
-    end
-
-    for _, node in ipairs(root.children) do
-        -- FIXME: seems like -1 for end line is not working for highlight
-        -- NOTE: seems that the offset for the column is -1 from the actual text buffer
-        -- both lines and chars start at 0, but line:byte(1) gives you the first character
-        if node.start_line ~= node.end_line then
-            for lineNo = node.start_line, node.end_line do
-                local lastChar = -1
-                local firstChar = 0;
-
-                if lineNo == node.start_line then
-                    firstChar = node.start_column - 1
-                end
-                if lineNo == node.end_line then
-                    lastChar = node.end_column
-                end
-                local highlightGroup = NodeTypeColor[node.type]
-                vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, lineNo, firstChar, lastChar)
-            end
-        else
-            -- single line mode
-            local highlightGroup = NodeTypeColor[node.type]
-            vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, node.start_line, node.start_column - 1,
-                node.end_column + 1)
-        end
-    end
-end
-
-function test()
-    setupBuffer()
-
-    local contentLines = file.loadFileInLines(false);
-    local tree = createMarkdownTree(contentLines);
-
-    buffer_write_lines(contentLines)
-    print_tree(tree, 0)
-    highlight_by_tree(tree)
-end
-
-local startTime = os.clock();
-test()
-local endTime = os.clock()
-nsUtils.printExecutionTime(startTime, endTime)
+return {
+    create_markdown_tree = createMarkdownTree,
+    NodeTypeColor = NodeTypeColor
+}

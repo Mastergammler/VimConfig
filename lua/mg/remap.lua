@@ -1,3 +1,5 @@
+local pathUtil = require("tooling.path.module")
+
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = '[P]roject [v]iew (show current folder files)' })
 vim.keymap.set("n", "<leader>fs", function()
     vim.lsp.buf.format()
@@ -117,6 +119,14 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>", { desc = "Quickfix next withi
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>", { desc = "Quickfix previous within project?" })
 vim.keymap.set("n", "<leader>lt", vim.cmd.TodoQuickFix, { desc = "[L]ist [T]odos (quickfix)" })
 
+
+function unload_current_module()
+    local curModule = pathUtil.current_module_name()
+    package.loaded[curModule] = nil
+end
+
+vim.keymap.set("n", "<leader>ul", unload_current_module,
+    { desc = "Unloads the current lua module, for faster dev cycles" })
 
 -- prep for future use
 --vim.keymap.set("n","<leader>ns","<cmd>silent !tmix neww tmux-sessionizer<CR>", { desc = "New tmux session" })
