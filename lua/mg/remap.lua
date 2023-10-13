@@ -1,3 +1,5 @@
+local refactor = require('tooling.refactoring.refactorUtils')
+
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = '[P]roject [v]iew (show current folder files)' })
 vim.keymap.set("n", "<leader>fs", function()
     vim.lsp.buf.format()
@@ -110,5 +112,8 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>", { desc = "Quickfix previous w
 vim.keymap.set("n", "<leader>lt", vim.cmd.TodoQuickFix, { desc = "[L]ist [T]odos (quickfix)" })
 
 
+vim.keymap.set("n", "<leader>mf", refactor.git_move_current,
+    { desc = "git [M]ove [f]ile - rename file with git tracking" })
 -- prep for future use
 --vim.keymap.set("n","<leader>ns","<cmd>silent !tmix neww tmux-sessionizer<CR>", { desc = "New tmux session" })
+--

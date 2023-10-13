@@ -31,6 +31,5 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "120"
 
-
 -- setting the default register to use the clipborad as well
 vim.opt.clipboard:append('unnamed,unnamedplus')

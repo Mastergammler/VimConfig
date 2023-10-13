@@ -4,8 +4,7 @@
 -- 3. accumulate paths & names
 -- 4. make the choose menu for it
 
-print("Loading projectsearch")
-
+--print("Loading projectsearch")
 
 function execTest()
     local rootDir = vim.fn.getcwd();
@@ -27,9 +26,10 @@ function execTest()
     print('finished')
 end
 
---[[return {
-    getRootDir = getRootDir
-}]]
---
-
 vim.keymap.set("n", "<leader>tt", execTest, { desc = "[t]est [t]est" })
+
+-- You need to return something in order for the file to get accepted as module
+-- The only exception seems to be the init.lua
+return {
+    getRootDir = execTest
+}
