@@ -150,7 +150,7 @@ end
 
 -- creating the tree
 
-function is_syntax_element(char, syntax)
+function matches_first(char, syntax)
     return char == syntax:byte(1)
 end
 
@@ -272,7 +272,7 @@ function parse_line_node(line, lineIndex, node, prevLineLength)
     for charIndex = 1, #line do
         local char = line:byte(charIndex)
         for key, symbol in pairs(SyntaxElements) do
-            if is_syntax_element(char, symbol) then
+            if matches_first(char, symbol) then
                 if is_repeating_element(curNode.element_type, key) then
                     increase_symbol_counter(curNode, key)
                 elseif is_different_element(curNode.element_type) then

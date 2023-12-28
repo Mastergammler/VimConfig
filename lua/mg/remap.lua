@@ -123,6 +123,7 @@ vim.keymap.set("n", "<leader>lt", vim.cmd.TodoQuickFix, { desc = "[L]ist [T]odos
 function unload_current_module()
     local curModule = pathUtil.current_module_name()
     package.loaded[curModule] = nil
+    print("Unloaded module: ", curModule)
 end
 
 vim.keymap.set("n", "<leader>ul", unload_current_module,

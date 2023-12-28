@@ -29,7 +29,8 @@ local NodeTypeColor = {
 local ColorMap = {
     TAG = "Function",
     BLOCK = "StatusLineNC",
-    DIRECTIVE = "WildMenu"
+    DIRECTIVE = "WildMenu",
+    STRING = "@string"
 }
 
 -- TODO: do i want to have these as references?
@@ -41,6 +42,7 @@ local SyntaxNodes = {
     DIRECTIVE = {
         Start = "@",
         End = ' ', -- EOL | EOF
+        EndInclusive = false,
         -- TODO: is multiline only relevant for auto ending?
         -- because else, it would just be handleed by the  tree?
         -- but it is important for the tree to know?
@@ -50,14 +52,26 @@ local SyntaxNodes = {
     TAG = {
         Start = "<",
         End = ">",
+        EndInclusive = true,
         Multiline = false,
         Color = ColorMap.TAG
     },
     SECTION = {
         Start = "{",
         End = "}",
+        EndInclusive = true,
         Multiline = true,
         Color = ColorMap.BLOCK
+    },
+    -- TODO: strings and directives can interact with each other
+    -- need to handle this as well
+    STRING = {
+        Start = '"',
+        End = '"',
+        EndInclusive = true,
+        Multiline = false,
+        Color = ColorMap.STRING
+
     }
 }
 
@@ -154,7 +168,7 @@ local tree = {
     -- how many symbols detected
     symbol_count = 0,
     -- type of sybol (kinda like node type) this represents
-    element_type = nil,
+    definition = nil,
 
     -- kind of section for highlight info
     type = NodeType.ROOT,
@@ -185,8 +199,10 @@ end
 
 -- creating the tree
 
-function is_syntax_element(char, syntax)
-    return char == syntax:byte(1)
+--- Compares the first chars of the elements
+--- bceause simple string to char matches don't work
+function matches_first(char, stringEl)
+    return char == stringEl:byte(1)
 end
 
 function get_symbol(key)
@@ -194,13 +210,21 @@ function get_symbol(key)
 end
 
 function close_node(curNode, lineNo, columnNo)
-    if curNode.element_type ~= nil then
+    -- if definition is missing, then this is the root node
+    -- every other node has to have the definition applied
+    if curNode.definition ~= nil then
         curNode.end_line = lineNo
         curNode.end_column = columnNo
         curNode.value = curNode.symbol_count .. "x" .. curNode.value
+        -- FIXME: this works different now
+        -- maybe i don't even need this anymore
+        -- because this type thing has been replaced by the definition?
         if not curNode.custom_type then
             curNode.type = SyntaxToNodeType[SyntaxElements[curNode.element_type]]
         end
+
+        -- TODO: this tells us not much, do i even need it?
+        curNode.is_closed = true
 
         return curNode.parent
     end
@@ -209,45 +233,25 @@ end
 
 -- TODO: this can probably be simplified a bit
 -- because now i don't need all this stuff here
-function next_child_node(previousNode, nextElement, lineNo, columnNo)
+function next_child_node(previousNode, elementDefinition, lineNo, columnNo)
     local new = {}
     new.has_content = false
     new.is_closed = false
-    new.element_type = nextElement
+    new.definition = elementDefinition
     new.symbol_count = 1
     new.start_line = lineNo
     new.start_column = columnNo
     new.end_line = -1
     new.end_column = -1
-    new.value = get_symbol(new.element_type)
+    -- TODO: do i need this?
+    -- do i maybe want to collect the content?
+    -- -> Or would that be sufficient via start and end tags and then get the stuff?
+    new.value = elementDefinition.Start --get_symbol(new.element_type)
     new.type = NodeType.COMMENT
 
     add_child(previousNode, new)
 
     return new
-end
-
--- checks than opening and closing an element will count as the same
-function is_repeating_element(syntaxElementA, syntaxElementB)
-    if syntaxElementA == syntaxElementB then return true end
-
-    local valueA = get_symbol(syntaxElementA)
-    local valueB = get_symbol(syntaxElementB)
-    local syntaxA = SemanticMap[valueA]
-    local syntaxB = SemanticMap[valueB]
-
-    if syntaxA ~= nil then
-        return syntaxA == syntaxB
-    end
-
-    return false
-end
-
--- this only works because we check before if it is actually a syntax element
--- maybe i should make a distinction between syntax and other text elements?
-function is_different_element(previousElement)
-    if previousElement == nil then return false end
-    return true
 end
 
 function switch_to_next_node(activeNode, syntaxElement, lineIndex, charIndex, previousLineLength)
@@ -268,50 +272,38 @@ function switch_to_next_node(activeNode, syntaxElement, lineIndex, charIndex, pr
     return next_child_node(activeNode, syntaxElement, lineIndex, charIndex)
 end
 
-function increase_symbol_counter(node, syntaxElement)
-    node.symbol_count = node.symbol_count + 1
-
-    if node.element_type ~= syntaxElement then
-        -- FIXME: this also affects the start and end handling
-        -- I need to rework the whole thing
-        --node.custom_type = true
-        -- TODO: more handling for different types
-        node.type = NodeType.TODO_DONE
-    end
-
-    -- if we revisit a node, that had text elements within it
-    -- that means we must have reached the end symbols
-    if node.has_content then
-        node.is_closed = true
-    end
-end
-
-function is_not_multi_line(node)
-    local syntaxValue = SyntaxElements[node.element_type];
-
-    if syntaxValue == SyntaxElements.CODE or
-        syntaxValue == SyntaxElements.COMMENT or
-        syntaxValue == SyntaxElements.DIRECTIVE then
-        return false
-    end
-
-    return true
-end
-
 function parse_line_node(line, lineIndex, node, prevLineLength)
     local curNode = node
 
     for charIndex = 1, #line do
         local char = line:byte(charIndex)
-        for _, def in pairs(SyntaxNodes) do
-            if char == def.Start then
-                curNode = next_child_node(curNode, def, lineIndex, charIndex)
-            elseif char == def.End then
-                -- -1 because this is the symbol after
-                curNode = close_node(curNode, lineIndex, charIndex - 1)
+
+        -- check first, if the symbol ends the current element
+        -- else nodes with same start and end node can't be detected properly
+        -- assuming the same node can't contain itself
+        if curNode.definition ~= nil and matches_first(char, curNode.definition.End) then
+            local idx = charIndex;
+            if not curNode.definition.EndInclusive then idx = charIndex - 1 end
+            curNode = close_node(curNode, lineIndex, idx)
+        else
+            -- PERF: also very inefficient if i find more syntax tokens
+            -- -> Will there be that many -> probably not! => mabye 10-20?
+            for _, def in pairs(SyntaxNodes) do
+                -- then check, if it is a new node type
+                if matches_first(char, def.Start) then
+                    curNode = next_child_node(curNode, def, lineIndex, charIndex)
+                    -- found a match, next char
+                    goto continue
+                else
+                    -- not a syntax element, skip
+                end
             end
         end
+
+        :: continue ::
     end
+
+    return curNode
 end
 
 --- TODO: refactor, this is very complicated, not really understandable anymore
@@ -328,7 +320,7 @@ function parse_line_node_old(line, lineIndex, node, prevLineLength)
     for charIndex = 1, #line do
         local char = line:byte(charIndex)
         for key, symbol in pairs(SyntaxElements) do
-            if is_syntax_element(char, symbol) then
+            if matches_first(char, symbol) then
                 if is_repeating_element(curNode.element_type, key) then
                     increase_symbol_counter(curNode, key)
                 elseif is_different_element(curNode.element_type) then
