@@ -1,5 +1,6 @@
 local file = require('tooling.testing.fileloader')
-local t = require('tooling.testing.tree')
+--local tree = require('tooling.testing.tree')
+local tree = require('tooling.testing.razortree')
 local nsUtils = require('examples.nsTest.testingFunctions')
 local debug = require('tooling.debug.printing')
 
@@ -32,14 +33,14 @@ function highlight_by_tree(root, outputBuffer)
                 if lineNo == node.end_line then
                     lastChar = node.end_column
                 end
-                local highlightGroup = t.NodeTypeColor[node.type]
+                local highlightGroup = tree.NodeTypeColor[node.type]
                 vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, lineNo, firstChar, lastChar)
             end
         else
             -- single line mode
-            local highlightGroup = t.NodeTypeColor[node.type]
+            local highlightGroup = tree.NodeTypeColor[node.type]
             vim.api.nvim_buf_add_highlight(outputBuffer, 0, highlightGroup, node.start_line, node.start_column - 1,
-                node.end_column + 1)
+                node.end_column)
         end
     end
 end
@@ -47,12 +48,13 @@ end
 function test()
     local buffer = debug.setup_buffer()
 
-    local contentLines = file.loadFileInLines(false);
-    local tree = t.create_markdown_tree(contentLines);
+    --local obsFileLines = file.loadObsFileInLines(false);
+    local fileLines = file.loadFileInLines(path);
+    local markdownTree = tree.create_markdown_tree(fileLines);
 
-    debug.buffer_append_lines(contentLines)
-    debug.print_tree(tree, 0, node_info_string)
-    highlight_by_tree(tree, buffer)
+    debug.buffer_append_lines(fileLines)
+    debug.print_tree(markdownTree, 0, node_info_string)
+    highlight_by_tree(markdownTree, buffer)
 end
 
 local startTime = os.clock();

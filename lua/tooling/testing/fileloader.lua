@@ -13,6 +13,10 @@ function get_file(bigFile)
     return file
 end
 
+function read_file(path)
+    return io.open(path, "r")
+end
+
 function loadFileContent(bigFile)
     local file = get_file(bigFile)
     if file then
@@ -22,8 +26,22 @@ function loadFileContent(bigFile)
     end
 end
 
-function loadFileInLines(bigFile)
+function loadObsFileInLines(bigFile)
     local file = get_file(bigFile)
+    if file then
+        local lines = {}
+        for line in file:lines() do
+            table.insert(lines, line)
+        end
+        return lines
+    else
+        print("Error reading file ..")
+    end
+end
+
+function loadFileInLines(filepath)
+    local file = read_file(filepath)
+
     if file then
         local lines = {}
         for line in file:lines() do
@@ -37,5 +55,6 @@ end
 
 return {
     loadFileContent = loadFileContent,
-    loadFileInLines = loadFileInLines
+    loadFileInLines = loadFileInLines,
+    loadObsFileInLines = loadObsFileInLines
 }

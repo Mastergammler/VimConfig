@@ -6,6 +6,7 @@ function setupBuffer()
     end
 
     vim.api.nvim_command("belowright split")
+    --vim.api.nvim_command("splitright split")
     vim.api.nvim_command("buffer " .. OutputBuffer)
 
     return OutputBuffer

@@ -1,0 +1,48 @@
+@page "/tags/edit"
+@rendermode InteractiveServer
+@inject TagRepository repo
+@inject NavigationManager nav
+
+<PageTitle>Edit Tag</PageTitle>
+<h2>Edit Tag</h2>
+
+<EditForm FormName="edit-tag" method="post" Model="@Model" OnValidSubmit="SaveProduct">
+    <AntiForgeryToken />
+
+    <div class="row">
+        <div class="col-sm-4">
+            <label class="form-label">Name</label>
+            <InputText @bind-Value="@Model.Name" class="form-control" />
+        </div>
+        <div class="col-sm-4">
+            <label class="form-label">Color</label>
+            <br />
+            <input type="color" @bind="@Model.Color" class="color-picker" />
+        </div>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary col-sm-8">Save</button>
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+</EditForm>
+
+@code {
+
+[SupplyParameterFromQuery]
+private int id {set;get;}
+
+[SupplyParameterFromForm]
+private Tag Model {set;get;}
+
+protected override async Task OnInitializedAsync()
+{
+Model = repo.Get(id);
+}
+
+private void SaveProduct()
+{
+repo.Update(Model);
+nav.NavigateTo("tags",false);
+}
+}

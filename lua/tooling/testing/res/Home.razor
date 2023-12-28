@@ -1,0 +1,55 @@
+@page "/"
+@inject OverviewRepository repo
+@attribute [StreamRendering]
+
+<PageTitle>Home</PageTitle>
+
+<h1>Finance Planning Tool</h1>
+
+@if(Model is not null)
+{
+<!-- TODO: make it a bar graph horizontal like in obsidian -->
+<table class="table">
+    <thead>
+        <tr class="table-dark">
+            <th class="text-center" colspan="2">5 Year Overview</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var entry in Model.Balances)
+        {
+        <tr class="@GetRowStyle(entry.Balance)">
+            <td><b>@entry.Title</b></td>
+            <td class="text-end">@entry.Balance.ToString("0.00 EUR")</td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr class="@GetRowStyle(Model.YearToDate.Balance)">
+            <td><b>@Model.YearToDate.Title</b></td>
+            <td class="text-end">@Model.YearToDate.Balance.ToString("0.00 EUR")</td>
+        </tr>
+        <tr class="@GetRowStyle(Model.Savings)">
+            <th>Savings</th>
+            <th class="text-end">@Model.Savings.ToString("0.00 EUR")</th>
+        </tr>
+    </tfoot>
+</table>
+}
+
+@code {
+private OverviewModel? Model = null;
+
+protected override async Task OnInitializedAsync()
+{
+Model = repo.GetOverview();
+}
+
+private string GetRowStyle(decimal val)
+{
+int threshold = 1250;
+if(val < -threshold) return "table-danger" ; if(val> threshold) return "table-success";
+    return "table-warning";
+    }
+
+    }
