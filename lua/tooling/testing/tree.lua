@@ -313,6 +313,8 @@ function parse_line_node(line, lineIndex, node, prevLineLength)
 end
 
 function createMarkdownTree(lines)
+    -- FIXME: tree will be preserved!!!
+    -- needs to be reset
     local curNode = tree;
     local prevLineLength = 0
 

@@ -1,0 +1,13 @@
+@page "/tags/edit"
+
+<h2>Edit Tag</h2>
+
+<EditForm FormName="edit-tag" method="post" Model="@Model" OnValidSubmit="SaveProduct">
+    <AntiForgeryToken />
+</EditForm>
+
+@code {
+
+    private int id {set;get;}
+
+}

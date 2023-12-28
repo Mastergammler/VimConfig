@@ -17,10 +17,10 @@ function highlight_by_tree(root, outputBuffer)
         return
     end
 
+    -- NOTE: seems that the offset for the column is -1 from the actual text buffer
+    -- both lines and chars start at 0, but line:byte(1) gives you the first character
+
     for _, node in ipairs(root.children) do
-        -- FIXME: seems like -1 for end line is not working for highlight
-        -- NOTE: seems that the offset for the column is -1 from the actual text buffer
-        -- both lines and chars start at 0, but line:byte(1) gives you the first character
         if node.start_line ~= node.end_line then
             for lineNo = node.start_line, node.end_line do
                 local lastChar = -1
@@ -41,11 +41,15 @@ function highlight_by_tree(root, outputBuffer)
                 node.start_column - 1,
                 node.end_column)
         end
+
+        -- recursion -> for children of children etc
+        highlight_by_tree(node, outputBuffer)
     end
 end
 
 function test()
-    local path = "lua/tooling/testing/res/WithCode.razor"
+    --local path = "lua/tooling/testing/res/WithCode.razor"
+    local path = "lua/tooling/testing/res/TagAttributes.razor"
     local buffer = debug.setup_buffer()
 
     local fileLines = file.loadFileInLines(path);

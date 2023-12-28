@@ -26,8 +26,13 @@ end
 --- tree that has children
 --- the nodeStringFunction has to create the string for the node
 --- hos to be compatible with it
+--- !!! for the tree start and end tags, this will only work if there is a single root node
+--- else it will print it every single time
 function print_tree(tree, indent, nodeStringFunction)
-    print("Function:", nodeStringFunction)
+    if indent == 0 then
+        buffer_print(-1, "------------ TREE -------------")
+    end
+
     buffer_print(-1, string.rep("    ", indent) .. nodeStringFunction(tree))
 
     if tree.children ~= nil then
@@ -35,11 +40,14 @@ function print_tree(tree, indent, nodeStringFunction)
             print_tree(node, indent + 1, nodeStringFunction)
         end
     end
+
+    if indent == 0 then
+        buffer_print(-1, "---------- TREE END -------------")
+    end
 end
 
 return {
     setup_buffer = setupBuffer,
     buffer_append_lines = buffer_append_lines,
     print_tree = print_tree
-
 }
