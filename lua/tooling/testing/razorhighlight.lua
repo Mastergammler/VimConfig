@@ -49,7 +49,7 @@ end
 
 function test()
     --local path = "lua/tooling/testing/res/WithCode.razor"
-    local path = "lua/tooling/testing/res/TagAttributes.razor"
+    local path = "lua/tooling/testing/res/EditPage.razor"
     local buffer = debug.setup_buffer()
 
     local fileLines = file.loadFileInLines(path);
